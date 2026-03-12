@@ -1,0 +1,139 @@
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+ }
+
+ body {
+     font-family: Georgia, serif;
+     background-color: #f0f4f8;
+ }
+
+ h1 {
+     text-align: center;
+     padding: 30px 0 10px;
+     color: #b22222;
+     font-size: 28px;
+     letter-spacing: 1px;
+ }
+
+ h3 {
+     text-align: center;
+     color: #555;
+     font-size: 13px;
+     font-weight: normal;
+     margin-bottom: 10px;
+     letter-spacing: 0.5px;
+ }
+
+ div {
+     height: auto;
+     width: 100%;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+     padding: 20px 0 40px;
+ }
+
+ form {
+     width: 520px;
+     padding: 35px 40px 45px;
+     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.15);
+     background: linear-gradient(to bottom right, #fff5f5, #ffffff);
+     border-top: 5px solid #b22222;
+     border-radius: 6px;
+     transition: transform 0.2s linear;
+ }
+
+ form:hover {
+     transform: scale(1.005);
+ }
+
+ .form-title {
+     font-size: 16px;
+     color: #b22222;
+     font-weight: bold;
+     margin-bottom: 20px;
+     padding-bottom: 10px;
+     border-bottom: 1px solid #f0d0d0;
+     letter-spacing: 0.5px;
+ }
+
+ form>table {
+     width: 100%;
+ }
+
+ table td:first-child {
+     width: 45%;
+     vertical-align: middle;
+     padding-right: 10px;
+ }
+
+ label {
+     font-size: 13.5px;
+     color: #333;
+     font-weight: bold;
+ }
+
+ input[type="text"],
+ input[type="number"],
+ input[type="email"],
+ input[type="date"],
+ select,
+ textarea {
+     width: 100%;
+     padding: 7px 10px;
+     border: 1px solid #ccc;
+     border-radius: 4px;
+     font-size: 13px;
+     color: #333;
+     background-color: #fff;
+     transition: border 0.2s;
+     outline: none;
+ }
+
+ input:focus,
+ select:focus,
+ textarea:focus {
+     border: 1px solid #b22222;
+ }
+
+ textarea {
+     resize: none;
+ }
+
+ select {
+     cursor: pointer;
+ }
+
+ form>button {
+     color: white;
+     width: 130px;
+     display: block;
+     margin: 30px auto 0;
+     border: none;
+     border-radius: 25px;
+     padding: 10px;
+     font-size: 14px;
+     letter-spacing: 0.5px;
+     background: linear-gradient(to right, #b22222, #e05555);
+     box-shadow: 0px 3px 8px rgba(178, 34, 34, 0.4);
+     cursor: pointer;
+     transition: transform 0.3s ease, box-shadow 0.3s ease;
+ }
+
+ form>button:hover {
+     transform: scale(1.08);
+     box-shadow: 0px 5px 14px rgba(178, 34, 34, 0.5);
+ }
+
+ sup {
+     color: red;
+ }
+
+ .note {
+     text-align: center;
+     font-size: 11px;
+     color: #888;
+     margin-top: 18px;
+ }
