@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./login.css">
+    <title>Login</title>
+</head>
+<body>
+    <form action="../dashboard/dashboard.html">
+        <fieldset>
+            <legend>Login</legend>
+            <table><tr>
+                <td><label for="number">Mobile Number:</label></td>
+                <td><input type="number" id="number" minlength="10" maxlength="10" placeholder="Enter your registered mobile number" required></td>
+                <td><button>Send OTP</button></td>
+            </tr>
+            <tr>
+                <td><label for="otp">One Time Password (OTP):</label></td>
+                <td><input type="number" id="otp" placeholder="Enter OTP here" ></td>
+                
+            </tr>
+            <tr>
+                <td></td>
+                <td><button>Resend OTP</button></td>
+                <td><button>Submit</button></td>
+            </tr></table>
+        </fieldset>
+    </form>
+</body>
+</html>
