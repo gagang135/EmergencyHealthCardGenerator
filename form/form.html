@@ -1,17 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./form.css">
-    <title>form</title>
+    <title>Emergency Healthcare</title>
+    <link rel="stylesheet" href="form.css">
 </head>
+
 <body>
-    <form action="">
-        <fieldset>
-            <legend>Enter your Details to create a Health card </legend>
-            <table></table>
-        </fieldset>
-    </form>
+    <h1> Emergency Healthcare</h1>
+    <h3>Fill in patient details. Fields marked <sup>*</sup> are mandatory.</h3>
+
+    <div>
+        <form action="">
+            <div class="form-title"> Patient Registration Form</div>
+
+            <table border="0" cellpadding="6" cellspacing="10">
+                <tr>
+                    <td><label for="fname">Full Name <sup>*</sup></label></td>
+                    <td><input type="text" id="fname" name="fname" placeholder="e.g. Ravi Kumar" required></td>
+                </tr>
+                <tr>
+                    <td><label for="dob">Date of Birth <sup>*</sup></label></td>
+                    <td><input type="date" id="dob" name="dob" required></td>
+                </tr>
+                <tr>
+                    <td><label for="gender">Gender <sup>*</sup></label></td>
+                    <td>
+                        <select id="gender" name="gender" required>
+                            <option value="">-- Select --</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Other</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="relation">Guardian's Name <sup>*</sup></label></td>
+                    <td><input type="text" id="relation" name="relation" placeholder="Father / Guardian" required></td>
+                </tr>
+                <tr>
+                    <td><label for="Phno">Phone Number <sup>*</sup></label></td>
+                    <td><input type="number" id="Phno" name="Phno" placeholder="10-digit mobile number" required></td>
+                </tr>
+                <tr>
+                    <td><label for="address">Address <sup>*</sup></label></td>
+                    <td><textarea id="address" name="address" rows="3" cols="20"
+                            placeholder="House no, Street, City, State" required></textarea></td>
+                </tr>
+                <tr>
+                    <td><label for="blood">Blood Group <sup>*</sup></label></td>
+                    <td>
+                        <select id="blood" name="blood" required>
+                            <option value="">-- Select --</option>
+                            <option>A+</option>
+                            <option>A-</option>
+                            <option>B+</option>
+                            <option>B-</option>
+                            <option>O+</option>
+                            <option>O-</option>
+                            <option>AB+</option>
+                            <option>AB-</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="disease">Chronic Disease <br><small style="color:#888">(if any)</small></label></td>
+                    <td><input type="text" id="disease" name="disease" placeholder="e.g. Diabetes, Asthma"></td>
+                </tr>
+                <tr>
+                    <td><label for="emergency">Emergency Contact <sup>*</sup></label></td>
+                    <td><input type="number" id="emergency" name="emergency" placeholder="Alternate phone number"
+                            required></td>
+                </tr>
+            </table>
+
+            <button type="submit">Submit</button>
+            <p class="note">Thank you for using this!</p>
+        </form>
+    </div>
 </body>
+
 </html>
