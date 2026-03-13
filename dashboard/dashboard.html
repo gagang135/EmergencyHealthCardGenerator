@@ -1,12 +1,716 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./dashboard.css">
-    <title>Dashboard</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediCard — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="dashboard.css">
 </head>
+
 <body>
-    
+
+    <!-- SIDEBAR OVERLAY (mobile) -->
+    <div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+    <!-- ═══════════ SIDEBAR ═══════════ -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-mark"></div>
+            <span class="logo-text">Medi<span>Card</span></span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section-label">Main</div>
+
+            <a class="nav-item active" href="#">
+                <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                Dashboard
+            </a>
+
+            <a class="nav-item" href="../form/form.html">
+                <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                Health Form
+                <span class="nav-badge">1</span>
+            </a>
+
+            <a class="nav-item" href="#">
+                <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                </svg>
+                My Cards
+            </a>
+
+            <a class="nav-item" href="#">
+                <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                Print / Export
+            </a>
+
+            <div class="nav-section-label">Health</div>
+
+            <a class="nav-item" href="#">
+                <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                Conditions
+            </a>
+
+            <a class="nav-item" href="#">
+                <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                </svg>
+                Medications
+            </a>
+
+            <a class="nav-item" href="#">
+                <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                Allergies
+            </a>
+
+            <div class="nav-section-label">Account</div>
+
+            <a class="nav-item" href="#">
+                <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Settings
+            </a>
+
+            <a class="nav-item" href="../login/login.html" style="margin-top:auto;">
+                <svg class="nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Log Out
+            </a>
+        </nav>
+
+        <div class="sidebar-user">
+            <div class="user-card">
+                <div class="user-avatar">R</div>
+                <div class="user-info">
+                    <div class="user-name">Spiderman</div>
+                    <div class="user-role">patient_id · MC-0042</div>
+                </div>
+                <svg class="user-chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                </svg>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ═══════════ MAIN ═══════════ -->
+    <div class="main-wrap">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" onclick="openSidebar()">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+                <div class="breadcrumb">
+                    <span>MediCard</span>
+                    <span class="sep">/</span>
+                    <span class="current">Dashboard</span>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <!-- search -->
+                <div class="topbar-btn">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <!-- notifications -->
+                <div class="topbar-btn">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    <span class="notif-dot"></span>
+                </div>
+                <!-- generate PDF button -->
+                <a href="../form/form.html" class="gen-btn">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                    </svg>
+                    New Card
+                </a>
+            </div>
+        </header>
+
+        <!-- PAGE -->
+        <main class="page">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <div>
+                    <h1>Welcome</h1>
+                    <p>Your emergency health card is active and ready to share.</p>
+                </div>
+                <div class="header-actions">
+                    <a href="#" class="btn-sm btn-outline-sm">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download PDF
+                    </a>
+                    <a href="../form/form.html" class="btn-sm btn-red-sm">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
+                        Edit Card
+                    </a>
+                </div>
+            </div>
+
+            <!-- Alert Banner -->
+            <div class="alert-banner" id="alertBanner">
+                <div class="alert-icon">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                </div>
+                <div class="alert-text">
+                    <strong>Allergy data may be outdated</strong>
+                    <span>Your allergy list was last updated 6 months ago. Please review and confirm it's still
+                        accurate.</span>
+                </div>
+                <button class="alert-close" onclick="document.getElementById('alertBanner').style.display='none'">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Active Cards</span>
+                        <div class="stat-icon" style="background:rgba(230,57,70,0.12);">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="var(--red)" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">1</div>
+                    <div class="stat-footer">
+                        <span class="stat-change up">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                            </svg>
+                            Active
+                        </span>
+                        <span>ID: MC-0042</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Conditions</span>
+                        <div class="stat-icon" style="background:rgba(245,158,11,0.12);">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="var(--amber)" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value" style="color:var(--amber);">3</div>
+                    <div class="stat-footer">
+                        <span class="stat-change warn">Logged</span>
+                        <span>Asthma, Hypertension +1</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Medications</span>
+                        <div class="stat-icon" style="background:rgba(96,165,250,0.12);">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="var(--blue)" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value" style="color:var(--blue);">2</div>
+                    <div class="stat-footer">
+                        <span class="stat-change"
+                            style="background:rgba(96,165,250,0.12);color:var(--blue);">Current</span>
+                        <span>Daily regimen</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">Allergies</span>
+                        <div class="stat-icon" style="background:rgba(34,197,94,0.12);">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="var(--green)" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value" style="color:var(--green);">2</div>
+                    <div class="stat-footer">
+                        <span class="stat-change"
+                            style="background:rgba(230,57,70,0.12);color:var(--red);">Review</span>
+                        <span>Needs update</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Grid -->
+            <div class="main-grid">
+
+                <!-- LEFT: Card + Lists -->
+                <div style="display:flex;flex-direction:column;gap:1.25rem;">
+
+                    <!-- Health Card Panel -->
+                    <div class="panel">
+                        <div class="panel-head">
+                            <div class="panel-title">
+                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0" />
+                                </svg>
+                                Emergency Health Card
+                            </div>
+                            <a href="../form/form.html" class="panel-action">Edit →</a>
+                        </div>
+
+                        <div class="health-card-wrap">
+                            <div class="health-card">
+                                <!-- top row -->
+                                <div class="hc-top-row">
+                                    <span class="hc-chip">Emergency Health Card</span>
+                                    <div class="hc-cross-icon"></div>
+                                </div>
+                                <!-- name -->
+                                <div class="hc-name-block">
+                                    <div class="hc-name">Spiderman</div>
+                                    <div class="hc-sub">DOB: 14 Aug 1998 &nbsp;·&nbsp; Male &nbsp;·&nbsp; ID: MC-0042
+                                    </div>
+                                </div>
+                                <!-- vitals -->
+                                <div class="hc-vitals">
+                                    <div class="hc-vital">
+                                        <div class="hc-vital-label">Blood Type</div>
+                                        <div class="hc-vital-val danger">B+</div>
+                                    </div>
+                                    <div class="hc-vital">
+                                        <div class="hc-vital-label">Primary Condition</div>
+                                        <div class="hc-vital-val">Asthma</div>
+                                    </div>
+                                    <div class="hc-vital">
+                                        <div class="hc-vital-label">Allergies</div>
+                                        <div class="hc-vital-val">Penicillin, Dust</div>
+                                    </div>
+                                </div>
+                                <div class="hc-divider"></div>
+                                <!-- bottom row -->
+                                <div class="hc-bottom-row">
+                                    <div class="hc-emergency">
+                                        <span class="hc-em-label">Emergency Contact</span>
+                                        <span class="hc-em-val">Mary Jane &nbsp;·&nbsp; +91 98765 43210</span>
+                                    </div>
+                                    <div class="hc-bloodtype">B+</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-actions">
+                            <a href="#" class="btn-sm btn-outline-sm">
+                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                </svg>
+                                Share Link
+                            </a>
+                            <a href="#" class="btn-sm btn-outline-sm">
+                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                                </svg>
+                                Print
+                            </a>
+                            <a href="#" class="btn-sm btn-red-sm" style="flex:1.5;justify-content:center;">
+                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                Download PDF
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Two-col: Conditions + Meds -->
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;">
+
+                        <!-- Conditions -->
+                        <div class="panel">
+                            <div class="panel-head">
+                                <div class="panel-title">
+                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                    </svg>
+                                    Conditions
+                                </div>
+                                <a href="../form/form.html" class="panel-action">+ Add</a>
+                            </div>
+                            <div class="info-list">
+                                <div class="info-item">
+                                    <div class="info-dot amber"></div>
+                                    <span class="info-item-name">Asthma</span>
+                                    <span class="info-tag tag-warn">Chronic</span>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-dot red"></div>
+                                    <span class="info-item-name">Hypertension</span>
+                                    <span class="info-tag tag-danger">Active</span>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-dot blue"></div>
+                                    <span class="info-item-name">Mild Anemia</span>
+                                    <span class="info-tag tag-info">Monitored</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Allergies -->
+                        <div class="panel">
+                            <div class="panel-head">
+                                <div class="panel-title">
+                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                    Allergies
+                                </div>
+                                <a href="../form/form.html" class="panel-action">+ Add</a>
+                            </div>
+                            <div class="info-list">
+                                <div class="info-item">
+                                    <div class="info-dot red"></div>
+                                    <span class="info-item-name">Penicillin</span>
+                                    <span class="info-tag tag-danger">Severe</span>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-dot amber"></div>
+                                    <span class="info-item-name">Dust Mites</span>
+                                    <span class="info-tag tag-warn">Moderate</span>
+                                </div>
+                                <div class="info-item"
+                                    style="opacity:0.35;justify-content:center;font-size:0.75rem;color:var(--text-3);padding:0.9rem 1.4rem;">
+                                    + Add another allergy
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Medications Panel -->
+                    <div class="panel">
+                        <div class="panel-head">
+                            <div class="panel-title">
+                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                </svg>
+                                Current Medications
+                            </div>
+                            <a href="../form/form.html" class="panel-action">+ Add</a>
+                        </div>
+                        <div class="info-list">
+                            <div class="info-item">
+                                <div class="info-dot blue"></div>
+                                <span class="info-item-name">Salbutamol Inhaler</span>
+                                <span class="info-item-meta" style="margin-right:0.5rem;">As needed</span>
+                                <span class="info-tag tag-info">Respiratory</span>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-dot green"></div>
+                                <span class="info-item-name">Amlodipine 5mg</span>
+                                <span class="info-item-meta" style="margin-right:0.5rem;">Once daily</span>
+                                <span class="info-tag tag-ok">Cardiac</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Feed -->
+                    <div class="panel">
+                        <div class="panel-head">
+                            <div class="panel-title">
+                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Recent Activity
+                            </div>
+                        </div>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-avatar"
+                                    style="background:linear-gradient(135deg,var(--red),#FF6B6B);">R</div>
+                                <div class="activity-body">
+                                    <div class="activity-line"><strong>Health card updated</strong> — Blood type
+                                        confirmed as B+</div>
+                                    <div class="activity-time">Today, 10:32 AM</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-avatar"
+                                    style="background:linear-gradient(135deg,var(--blue),#93C5FD);">R</div>
+                                <div class="activity-body">
+                                    <div class="activity-line"><strong>New medication added</strong> — Amlodipine 5mg
+                                    </div>
+                                    <div class="activity-time">Yesterday, 3:15 PM</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-avatar"
+                                    style="background:linear-gradient(135deg,var(--amber),#FCD34D);">R</div>
+                                <div class="activity-body">
+                                    <div class="activity-line"><strong>Card downloaded</strong> — PDF exported</div>
+                                    <div class="activity-time">12 Mar 2026, 9:00 AM</div>
+                                </div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-avatar"
+                                    style="background:linear-gradient(135deg,var(--green),#86EFAC);">R</div>
+                                <div class="activity-body">
+                                    <div class="activity-line"><strong>Account created</strong> — Registration complete
+                                    </div>
+                                    <div class="activity-time">10 Mar 2026, 2:45 PM</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /LEFT -->
+
+                <!-- RIGHT column -->
+                <div class="right-col">
+
+                    <!-- QR Code Panel -->
+                    <div class="qr-panel">
+                        <div class="qr-label">Emergency QR Code</div>
+                        <div class="qr-code-text">MC-0042</div>
+
+                        <!-- Decorative QR grid -->
+                        <div class="qr-frame">
+                            <!-- Row 1 -->
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell b"></div>
+                            <!-- Row 2 -->
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <!-- Row 3 -->
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell b"></div>
+                            <!-- Row 4 (data) -->
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                            <!-- Row 5 -->
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <!-- Row 6 -->
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <!-- Row 7 -->
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell b"></div>
+                            <div class="qr-cell w"></div>
+                        </div>
+
+                        <p style="font-size:0.72rem;color:var(--text-3);margin-bottom:1rem;line-height:1.5;">
+                            First responders can scan this to instantly access your emergency health info.
+                        </p>
+                        <div class="qr-actions">
+                            <a href="#" class="btn-sm btn-outline-sm">
+                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                Save
+                            </a>
+                            <a href="#" class="btn-sm btn-outline-sm">
+                                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                </svg>
+                                Share
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Mini Profile -->
+                    <div class="profile-panel">
+                        <div class="profile-cover"></div>
+                        <div class="profile-body">
+                            <div class="profile-avatar">S</div>
+                            <div class="profile-name">Spiderman</div>
+                            <div class="profile-email">Spiderman@gmail.com</div>
+                            <div class="profile-stats">
+                                <div class="profile-stat">
+                                    <div class="profile-stat-val">1</div>
+                                    <div class="profile-stat-label">Cards</div>
+                                </div>
+                                <div class="profile-stat">
+                                    <div class="profile-stat-val">3</div>
+                                    <div class="profile-stat-label">Conditions</div>
+                                </div>
+                                <div class="profile-stat">
+                                    <div class="profile-stat-val">2</div>
+                                    <div class="profile-stat-label">Meds</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Completion -->
+                    <div class="complete-prompt">
+                        <div class="progress-header">
+                            <span class="progress-title">Profile Completeness</span>
+                            <span class="progress-pct">70%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill"></div>
+                        </div>
+                        <div class="todo-list">
+                            <div class="todo-item">
+                                <div class="todo-check done">
+                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <span class="todo-text done-text">Basic Info (Name, DOB)</span>
+                            </div>
+                            <div class="todo-item">
+                                <div class="todo-check done">
+                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <span class="todo-text done-text">Blood Type Added</span>
+                            </div>
+                            <div class="todo-item">
+                                <div class="todo-check done">
+                                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <span class="todo-text done-text">Emergency Contact Set</span>
+                            </div>
+                            <div class="todo-item">
+                                <div class="todo-check pending"></div>
+                                <span class="todo-text">Add Profile Photo</span>
+                            </div>
+                            <div class="todo-item">
+                                <div class="todo-check pending"></div>
+                                <span class="todo-text">Confirm Allergy List</span>
+                            </div>
+                            <div class="todo-item">
+                                <div class="todo-check pending"></div>
+                                <span class="todo-text">Add Insurance Details</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /RIGHT -->
+
+            </div><!-- /main-grid -->
+
+        </main>
+    </div>
+
+    <!-- ═══════════ JS (minimal) ═══════════ -->
+    <script>
+        /* Mobile sidebar toggle — just 3 functions, pure DOM */
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('open');
+            document.getElementById('overlay').classList.add('active');
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        /* Nav item active state on click */
+        document.querySelectorAll('.nav-item').forEach(function (item) {
+            item.addEventListener('click', function () {
+                document.querySelectorAll('.nav-item').forEach(function (i) {
+                    i.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+    </script>
+
 </body>
+
 </html>
