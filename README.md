@@ -405,14 +405,13 @@ This project is open source and available under the [MIT License](LICENSE).
 
 <div align="center">
 
-**Built with ❤️ by the MediCard team**
 
 *Frontend complete · Java Servlet backend coming soon*
 
 | | Contributor | GitHub |
 |---|---|---|
-| 👨‍💻 | gagang135 | [![GitHub](https://img.shields.io/badge/gagang135-181717?style=flat-square&logo=github)](https://github.com/gagang135) |
 | 👨‍💻 | prashanthcoder | [![GitHub](https://img.shields.io/badge/prashanthcoder-181717?style=flat-square&logo=github)](https://github.com/prashanthcoder) |
+| 👨‍💻 | gagang135 | [![GitHub](https://img.shields.io/badge/gagang135-181717?style=flat-square&logo=github)](https://github.com/gagang135) |
 
 [![Live](https://img.shields.io/badge/Live-netlify-00C7B7?style=flat-square&logo=netlify)](https://luminous-manatee-5923e1.netlify.app/)
 
