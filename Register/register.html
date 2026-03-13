@@ -7,27 +7,36 @@
     <title>Register</title>
 </head>
 <body>
-    <form action="../login/login.html">
-        <fieldset>
-            <table><tr>
-            <legend>Register</legend>
-            <td><label for="name">Name:</label></td>
-            <td><input type="text" id="name" required placeholder="Enter your name"></td>
-            </tr>
-            <tr>
-            <td><label for="Phno">Mobile Number:</label></td>
-            <td><input type="number" id="Phno" minlength="10" maxlength="10" placeholder="Enter your mobile number" required></td>
-            </tr>
-            <tr>
-            <td><label for="uid">Aadhaar Number:</label></td>
-            <td><input type="number" id="uid" minlength="12" maxlength="12" placeholder="Enter your Aadhaar number" required></td>
-            </tr>
-            <tr>
-                <td><button>Submit</button></td>
-            <td><Button>Reset</Button></td>
-            </tr>
+    <h1>Register</h1>
+    <form action="../login/login.html" onsubmit="showMessage(event)">
+        
+            <table border="0" cellpadding="6" cellspacing="10">
+                <tr>
+                    <th></th>
+                </tr>
+                <tr>
+                    <td><label for="name">Name:</label></td>
+                    <td><input type="text" id="name" required placeholder="Enter your name"></td>
+                </tr>
+                <tr>
+                    <td><label for="Phno">Mobile Number:</label></td>
+                    <td><input type="number" id="Phno" minlength="10" maxlength="10" placeholder="Enter your mobile number" required></td>
+                </tr>
+                <tr>
+                    <td><label for="uid">Aadhaar Number:</label></td>
+                    <td><input type="number" id="uid" minlength="12" maxlength="12" placeholder="Enter your Aadhaar number" required></td>
+                </tr>
+                <tr>
+                    <td><button type="submit">Submit</button></td>
+                    <td><Button type="reset">Reset</Button></td>
+                </tr>
             </table>
-        </fieldset>
     </form>
+    <script>
+        function showMessage(event){
+            
+            alert("Registration successful!");
+        }
+    </script>
 </body>
 </html>
