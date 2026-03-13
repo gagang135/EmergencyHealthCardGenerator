@@ -7,25 +7,51 @@
     <title>Login</title>
 </head>
 <body>
-    <form action="../dashboard/dashboard.html">
-        <fieldset>
-            <legend>Login</legend>
+    <h1>Log-In</h1>
+    <form action="../dashboard/dashboard.html" onsubmit="showMessage(event)">
+       
             <table><tr>
                 <td><label for="number">Mobile Number:</label></td>
                 <td><input type="number" id="number" minlength="10" maxlength="10" placeholder="Enter your registered mobile number" required></td>
-                <td><button>Send OTP</button></td>
+                <td><button onclick="sendOTP()">Send OTP</button></td>
             </tr>
             <tr>
                 <td><label for="otp">One Time Password (OTP):</label></td>
-                <td><input type="number" id="otp" placeholder="Enter OTP here" ></td>
+                <td><input type="text" id="otp" placeholder="Enter OTP here" maxlength="6"></td>
                 
             </tr>
             <tr>
-                <td></td>
-                <td><button>Resend OTP</button></td>
-                <td><button>Submit</button></td>
+                <td><button onclick="resendOTP()">Resend OTP</button></td>
+                <td><button type="submit">Submit</button></td>
             </tr></table>
-        </fieldset>
     </form>
+    <script>
+        let generateOTP="";
+        function sendOTP(){
+            let mobile=document.getElementById("number").value;
+            if(mobile.length!=10){
+                    event.preventDefault();
+
+                alaert("enter valid 10 digit mobile number" );
+                return;
+            }
+            generatedOTP=Math.floor(100000+Math.random()*900000);
+            alert("OTP sent: "+ generatedOTP);
+
+        }
+        function resendOTP(){
+            generatedOTP=Math.floor(100000+Math.random()*900000);
+            alert("new OTP sent: "+ generatedOTP);
+        }
+        function showMessage(event){
+            let userOTP=document.getElementById("otp").value;
+            if(userOTP==generateOTP){
+                alert("Login Successful");
+                window.location.href="../dashboard/dashboard.html";
+            }else{
+                alert("Invalid OTP");
+            }
+        }
+    </script>
 </body>
 </html>
