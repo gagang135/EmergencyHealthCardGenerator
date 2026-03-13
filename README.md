@@ -46,10 +46,10 @@ Deployed on Netlify from the `main` branch. No build step required — pure stat
 | Page | Route | Description |
 |---|---|---|
 | 🏠 Landing | `/index.html` | Hero landing page with scroll animation |
-| 📝 Register | `/Register/index.html` | New user registration form |
-| 🔐 Login | `/login/index.html` | User login page |
-| 🩺 Health Form | `/form/index.html` | Fill in blood type, allergies, medications |
-| 📊 Dashboard | `/dashboard/index.html` | View & manage your emergency health card |
+| 📝 Register | `/Register/register.html` | New user registration form |
+| 🔐 Login | `/login/login.html` | User login page |
+| 🩺 Health Form | `/form/form.html` | Fill in blood type, allergies, medications |
+| 📊 Dashboard | `/dashboard/dashboard.html` | View & manage your emergency health card |
 
 ---
 
@@ -71,18 +71,27 @@ Deployed on Netlify from the `main` branch. No build step required — pure stat
 EmergencyHealthCardGenerator/
 │
 ├── index.html                  ← Landing page (scroll animation hero)
+├── index.css                   ← Landing page styles
 │
 ├── Register/
-│   └── index.html              ← Registration form
+│   ├── register.html           ← Registration form
+│   └── register.css            ← Registration styles
 │
 ├── login/
-│   └── index.html              ← Login page
+│   ├── login.html              ← Login page
+│   └── login.css               ← Login styles
 │
 ├── form/
-│   └── index.html              ← Health data entry form
+│   ├── form.html               ← Health data entry form
+│   └── form.css                ← Form styles
 │
-└── dashboard/
-    └── index.html              ← User dashboard with health card preview
+├── dashboard/
+│   ├── dashboard.html          ← User dashboard with health card preview
+│   └── dashboard.css           ← Dashboard styles
+│
+├── db.properties.example       ← ✅ Commit this (template only, no real credentials)
+├── db.properties               ← ❌ Never commit (add to .gitignore)
+└── .gitignore
 ```
 
 ---
@@ -127,6 +136,154 @@ Then visit `http://localhost:3000`
 | Fonts | Google Fonts — DM Serif Display, DM Sans, Space Mono |
 | Deployment | Netlify (static hosting) |
 | Backend (planned) | Java Servlets + JDBC + MySQL + Apache Tomcat |
+
+---
+
+## 🔒 Security & Secrets
+
+> ⚠️ **Never commit real credentials to a public repository.**
+
+All sensitive configuration must stay off GitHub. Here's the pattern to follow:
+
+**Add to `.gitignore`:**
+```
+# Secrets — never push these
+db.properties
+config.properties
+*.env
+WEB-INF/classes/config.properties
+```
+
+**Commit only the template** (`db.properties.example`):
+```properties
+# db.properties.example  ← safe to commit, contains NO real values
+db.url=jdbc:mysql://localhost:3306/YOUR_DB_NAME
+db.user=YOUR_DB_USERNAME
+db.password=YOUR_DB_PASSWORD
+```
+
+**Keep the real file only on your local machine** (`db.properties`):
+```properties
+# db.properties  ← NEVER commit this file
+db.url=jdbc:mysql://localhost:3306/medicard
+db.user=root
+db.password=yourActualPassword
+```
+
+This is standard practice on every real-world Java web project.
+
+---
+
+## 🏗️ Architecture
+
+### Current — Static Frontend (Phase 1)
+
+```
+Browser
+   │
+   ▼
+┌─────────────────────────────────────────────┐
+│              Netlify CDN                    │
+│                                             │
+│  index.html  ──── index.css                 │
+│  register.html ── register.css              │
+│  login.html  ──── login.css                 │
+│  form.html   ──── form.css                  │
+│  dashboard.html ─ dashboard.css             │
+└─────────────────────────────────────────────┘
+```
+
+No server. No database. Pure static files served from Netlify.
+
+---
+
+### Planned — Full Stack (Phase 2+)
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                        BROWSER                           │
+│                                                          │
+│  register.html  login.html  form.html  dashboard.html    │
+│        │              │          │            │          │
+└────────┼──────────────┼──────────┼────────────┼──────────┘
+         │  HTTP POST   │ HTTP POST│ HTTP POST  │ HTTP GET
+         ▼              ▼          ▼            ▼
+┌──────────────────────────────────────────────────────────┐
+│                  Apache Tomcat Server                    │
+│                                                          │
+│  ┌──────────────────┐   ┌────────────────────────────┐  │
+│  │   web.xml         │   │        Servlets            │  │
+│  │  URL Mappings     │──▶│                            │  │
+│  │                   │   │  RegisterServlet.java       │  │
+│  │  /register   ──▶ RS│  │  LoginServlet.java          │  │
+│  │  /login      ──▶ LS│  │  FormServlet.java           │  │
+│  │  /health-form ──▶ FS│ │  DashboardServlet.java      │  │
+│  │  /dashboard  ──▶ DS│  │  LogoutServlet.java         │  │
+│  └──────────────────┘   │  DownloadCardServlet.java   │  │
+│                          └──────────────┬──────────────┘  │
+└─────────────────────────────────────────┼────────────────┘
+                                          │ JDBC
+                                          ▼
+┌──────────────────────────────────────────────────────────┐
+│                     MySQL Database                       │
+│                                                          │
+│  ┌─────────────────────┐    ┌────────────────────────┐  │
+│  │      users           │    │     health_cards        │  │
+│  │─────────────────────│    │────────────────────────│  │
+│  │ id (PK)             │◀───│ user_id (FK)            │  │
+│  │ name                │    │ blood_type              │  │
+│  │ email (UNIQUE)      │    │ conditions              │  │
+│  │ password (hashed)   │    │ allergies               │  │
+│  │ created_at          │    │ medications             │  │
+│  └─────────────────────┘    │ emergency_contact       │  │
+│                              │ emergency_phone         │  │
+│                              └────────────────────────┘  │
+└──────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Request Flow — Login Example
+
+```
+User fills login.html
+        │
+        │  POST /login  (email + password)
+        ▼
+  LoginServlet.java
+        │
+        ├── 1. Read email + password from request
+        ├── 2. Query DB: SELECT * FROM users WHERE email = ?
+        ├── 3. Verify BCrypt password hash
+        ├── 4. Create HttpSession → session.setAttribute("user", userObj)
+        │
+        ├── ✅ Success → redirect to /dashboard
+        └── ❌ Failure → redirect to login.html?error=1
+```
+
+---
+
+### Data Flow — Health Card Generation
+
+```
+form.html  ──POST──▶  FormServlet
+                           │
+                    Check HttpSession
+                           │
+               ┌───────────┴───────────┐
+          Not logged in           Logged in
+               │                       │
+        redirect to             INSERT / UPDATE
+         login.html             health_cards table
+                                       │
+                               redirect to dashboard
+                                       │
+                           DashboardServlet fetches
+                           card data from DB and
+                           forwards to dashboard.html (JSP)
+                                       │
+                               User sees their card ✅
+```
 
 ---
 
@@ -247,6 +404,8 @@ This project is open source and available under the [MIT License](LICENSE).
 ---
 
 <div align="center">
+
+**Built with ❤️ by the MediCard team**
 
 *Frontend complete · Java Servlet backend coming soon*
 
