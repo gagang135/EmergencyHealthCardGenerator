@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediCard — Emergency Health Card Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --red: #E63946;
+            --red-deep: #B5202D;
+            --cream: #F8F4EF;
+            --ink: #0D0D0D;
+            --ink-muted: #3A3A3A;
+            --ink-light: #888;
+            --white: #FFFFFF;
+            --card-bg: #1A1A1A;
+            --card-border: #333;
+            --pulse-green: #22C55E;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--ink);
+            overflow-x: hidden;
+        }
+
+        /* ─── NAV ─── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem 3rem;
+            background: rgba(248, 244, 239, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-logo .cross {
+            width: 28px;
+            height: 28px;
+            background: var(--red);
+            border-radius: 6px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-logo .cross::before,
+        .nav-logo .cross::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .nav-logo .cross::before {
+            width: 14px;
+            height: 3px;
+        }
+
+        .nav-logo .cross::after {
+            width: 3px;
+            height: 14px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--ink-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--red);
+        }
+
+        .nav-cta {
+            background: var(--red);
+            color: white !important;
+            padding: 0.5rem 1.2rem;
+            border-radius: 6px;
+            transition: background 0.2s !important;
+        }
+
+        .nav-cta:hover {
+            background: var(--red-deep) !important;
+            color: white !important;
+        }
+
+        /* ─── HERO ─── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 8rem 2rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg-grid {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            background-image:
+                linear-gradient(rgba(230, 57, 70, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(230, 57, 70, 0.06) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        .hero-bg-glow {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            background: radial-gradient(ellipse at center, rgba(230, 57, 70, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero-badge {
+            position: relative;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(230, 57, 70, 0.1);
+            border: 1px solid rgba(230, 57, 70, 0.3);
+            color: var(--red);
+            font-size: 0.78rem;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            margin-bottom: 2rem;
+        }
+
+        .hero-badge .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--pulse-green);
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(0.7);
+            }
+        }
+
+        h1.hero-title {
+            position: relative;
+            z-index: 1;
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2.8rem, 6vw, 6rem);
+            line-height: 1.05;
+            color: var(--ink);
+            max-width: 900px;
+            margin-bottom: 1.5rem;
+        }
+
+        h1.hero-title em {
+            font-style: italic;
+            color: var(--red);
+        }
+
+        .hero-sub {
+            position: relative;
+            z-index: 1;
+            font-size: 1.125rem;
+            color: var(--ink-muted);
+            max-width: 560px;
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-actions {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--red);
+            color: white;
+            padding: 0.85rem 2rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px rgba(230, 57, 70, 0.35);
+        }
+
+        .btn-primary:hover {
+            background: var(--red-deep);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(230, 57, 70, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--ink);
+            padding: 0.85rem 2rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: 1.5px solid rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: border-color 0.2s, transform 0.15s;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--red);
+            color: var(--red);
+            transform: translateY(-2px);
+        }
+
+        .hero-note {
+            position: relative;
+            z-index: 1;
+            font-size: 0.78rem;
+            color: var(--ink-light);
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* ─── SCROLL CONTAINER ANIMATION ─── */
+        .scroll-section {
+            height: 180vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            position: relative;
+        }
+
+        .scroll-sticky {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            perspective: 1200px;
+            padding: 0 2rem;
+            overflow: hidden;
+        }
+
+        .scroll-title {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            transform: translateY(0px);
+            transition: transform 0.1s linear;
+        }
+
+        .scroll-title h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            color: var(--ink);
+            margin-bottom: 0.5rem;
+        }
+
+        .scroll-title p {
+            font-size: 1rem;
+            color: var(--ink-muted);
+        }
+
+        .card-stage {
+            width: 100%;
+            max-width: 920px;
+            margin: 0 auto;
+            transform-origin: top center;
+        }
+
+        .dashboard-mockup {
+            background: #111;
+            border: 3px solid #2A2A2A;
+            border-radius: 24px;
+            padding: 0;
+            overflow: hidden;
+            box-shadow:
+                0 0 0 1px rgba(255, 255, 255, 0.03),
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 80px 120px rgba(0, 0, 0, 0.3);
+        }
+
+        .mockup-topbar {
+            background: #1C1C1C;
+            padding: 0.85rem 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            border-bottom: 1px solid #2A2A2A;
+        }
+
+        .mockup-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .mockup-dot.r {
+            background: #FF5F57;
+        }
+
+        .mockup-dot.y {
+            background: #FEBC2E;
+        }
+
+        .mockup-dot.g {
+            background: #28C840;
+        }
+
+        .mockup-url {
+            flex: 1;
+            background: #2A2A2A;
+            border-radius: 6px;
+            padding: 0.3rem 0.8rem;
+            margin-left: 0.6rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            color: #666;
+        }
+
+        .mockup-body {
+            padding: 1.5rem;
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 1.2rem;
+            min-height: 400px;
+        }
+
+        /* sidebar */
+        .mock-sidebar {
+            background: #1A1A1A;
+            border-radius: 14px;
+            padding: 1.2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .mock-sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.6rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .mock-sidebar-logo .icon {
+            width: 28px;
+            height: 28px;
+            background: var(--red);
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .mock-sidebar-logo .icon::before,
+        .mock-sidebar-logo .icon::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 1px;
+        }
+
+        .sidebar-logo-text {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.78rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .mock-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.55rem 0.8rem;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            color: #666;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .mock-nav-item.active {
+            background: rgba(230, 57, 70, 0.15);
+            color: #E63946;
+        }
+
+        .mock-nav-item:not(.active):hover {
+            background: #222;
+            color: #aaa;
+        }
+
+        .mock-nav-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7;
+            flex-shrink: 0;
+        }
+
+        /* main content */
+        .mock-main {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mock-header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .mock-header-row h3 {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .mock-btn {
+            background: var(--red);
+            color: white;
+            padding: 0.4rem 0.9rem;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* health card preview */
+        .health-card-preview {
+            background: linear-gradient(135deg, #1E1E2E, #2A1A1A);
+            border-radius: 14px;
+            padding: 1.4rem;
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .health-card-preview::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(230, 57, 70, 0.2), transparent 70%);
+            border-radius: 50%;
+        }
+
+        .hc-cross {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 32px;
+            height: 32px;
+            background: var(--red);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .hc-cross::before,
+        .hc-cross::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .hc-cross::before {
+            width: 16px;
+            height: 3px;
+        }
+
+        .hc-cross::after {
+            width: 3px;
+            height: 16px;
+        }
+
+        .hc-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--red);
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .hc-name {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.3rem;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+
+        .hc-details {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.8rem;
+        }
+
+        .hc-detail-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .hc-detail-label {
+            font-size: 0.6rem;
+            color: #666;
+            font-family: 'Space Mono', monospace;
+            text-transform: uppercase;
+        }
+
+        .hc-detail-val {
+            font-size: 0.78rem;
+            color: #ccc;
+            font-weight: 500;
+        }
+
+        .hc-bloodtype {
+            position: absolute;
+            bottom: 1rem;
+            right: 1.2rem;
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            color: var(--red);
+            opacity: 0.8;
+        }
+
+        /* stats row */
+        .mock-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.7rem;
+        }
+
+        .mock-stat {
+            background: #1A1A1A;
+            border-radius: 10px;
+            padding: 0.9rem;
+            border: 1px solid #252525;
+        }
+
+        .mock-stat-val {
+            font-family: 'Space Mono', monospace;
+            font-size: 1.2rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .mock-stat-val span {
+            color: var(--pulse-green);
+        }
+
+        .mock-stat-label {
+            font-size: 0.68rem;
+            color: #555;
+            margin-top: 0.2rem;
+        }
+
+        /* ─── FEATURES ─── */
+        .features {
+            background: var(--ink);
+            padding: 6rem 2rem;
+        }
+
+        .section-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--red);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .section-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            color: white;
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+            line-height: 1.1;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: #1A1A1A;
+            border: 1px solid #2A2A2A;
+            border-radius: 16px;
+            padding: 2rem;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(230, 57, 70, 0.4);
+            transform: translateY(-4px);
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(230, 57, 70, 0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+        }
+
+        .feature-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--red);
+        }
+
+        .feature-card h3 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 0.6rem;
+        }
+
+        .feature-card p {
+            font-size: 0.875rem;
+            color: #666;
+            line-height: 1.65;
+        }
+
+        /* ─── FLOW SECTION ─── */
+        .flow-section {
+            padding: 6rem 2rem;
+            background: var(--cream);
+        }
+
+        .flow-steps {
+            display: flex;
+            gap: 0;
+            max-width: 960px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .flow-steps::before {
+            content: '';
+            position: absolute;
+            top: 2rem;
+            left: 2.5rem;
+            right: 2.5rem;
+            height: 2px;
+            background: linear-gradient(90deg, var(--red), transparent);
+            z-index: 0;
+        }
+
+        .flow-step {
+            flex: 1;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-num {
+            width: 4rem;
+            height: 4rem;
+            background: var(--red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Space Mono', monospace;
+            font-size: 1rem;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 0 0 6px rgba(230, 57, 70, 0.1);
+        }
+
+        .flow-step h4 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .flow-step p {
+            font-size: 0.82rem;
+            color: var(--ink-muted);
+            line-height: 1.6;
+        }
+
+        .flow-step .tech-tag {
+            display: inline-block;
+            margin-top: 0.8rem;
+            font-family: 'Space Mono', monospace;
+            font-size: 0.65rem;
+            color: var(--red);
+            background: rgba(230, 57, 70, 0.08);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            letter-spacing: 0.06em;
+        }
+
+        /* ─── CTA SECTION ─── */
+        .cta-section {
+            background: var(--ink);
+            padding: 7rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 400px;
+            background: radial-gradient(ellipse at top, rgba(230, 57, 70, 0.15) 0%, transparent 70%);
+        }
+
+        .cta-section h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            color: white;
+            margin-bottom: 1.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section p {
+            color: #666;
+            font-size: 1rem;
+            margin-bottom: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-actions {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary-lg {
+            background: var(--red);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.15s;
+            box-shadow: 0 4px 24px rgba(230, 57, 70, 0.4);
+        }
+
+        .btn-primary-lg:hover {
+            background: var(--red-deep);
+            transform: translateY(-2px);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: #888;
+            padding: 1rem 2.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            border: 1px solid #333;
+            transition: border-color 0.2s, color 0.2s;
+        }
+
+        .btn-ghost:hover {
+            border-color: #555;
+            color: #ccc;
+        }
+
+        /* ─── FOOTER ─── */
+        footer {
+            background: #0A0A0A;
+            padding: 3rem 3rem 2rem;
+            border-top: 1px solid #1A1A1A;
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #1A1A1A;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-brand .nav-logo {
+            color: white;
+        }
+
+        .footer-brand p {
+            font-size: 0.8rem;
+            color: #444;
+            margin-top: 0.6rem;
+            max-width: 220px;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-col h5 {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.68rem;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 1rem;
+        }
+
+        .footer-col a {
+            display: block;
+            font-size: 0.82rem;
+            color: #444;
+            text-decoration: none;
+            margin-bottom: 0.6rem;
+            transition: color 0.2s;
+        }
+
+        .footer-col a:hover {
+            color: #aaa;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .footer-bottom p {
+            font-size: 0.75rem;
+            color: #333;
+            font-family: 'Space Mono', monospace;
+        }
+
+        /* ─── SCROLL ANIMATION ENGINE ─── */
+        .animate-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .animate-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ─── RESPONSIVE ─── */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mockup-body {
+                grid-template-columns: 1fr;
+            }
+
+            .mock-sidebar {
+                display: none;
+            }
+
+            .flow-steps {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .flow-steps::before {
+                display: none;
+            }
+
+            .footer-links {
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAV -->
+    <nav>
+        <div class="nav-logo">
+            <div class="cross"></div>
+            MediCard
+        </div>
+        <div class="nav-links">
+            <a href="#features">Features</a>
+            <a href="#how-it-works">How It Works</a>
+            <a href="login/login.html">Login</a>
+            <a href="Register/register.html" class="nav-cta">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-bg-grid"></div>
+        <div class="hero-bg-glow"></div>
+
+        <div class="hero-badge">
+            <span class="dot"></span>
+            Emergency-Ready Health Records
+        </div>
+
+        <h1 class="hero-title">
+            Your health data,<br>
+            <em>instantly accessible</em><br>
+            when it matters most.
+        </h1>
+
+        <p class="hero-sub">
+            Generate a secure, portable emergency health card in minutes. Critical information available to first
+            responders — always.
+        </p>
+
+        <div class="hero-actions">
+            <a href="Register/register.html" class="btn-primary">Create Your Card →</a>
+            <a href="login/login.html" class="btn-outline">Sign In</a>
+        </div>
+
+        <p class="hero-note">No account required for preview &nbsp;·&nbsp; Java Servlet backend coming soon</p>
+    </section>
+
+    <!-- ─── SCROLL ANIMATION SECTION ─── -->
+    <section class="scroll-section" id="preview">
+        <div class="scroll-sticky" id="scrollSticky">
+            <div class="scroll-title" id="scrollTitle">
+                <h2>Your dashboard, beautifully designed.</h2>
+                <p>Manage, generate, and share emergency health cards in one place.</p>
+            </div>
+
+            <div class="card-stage" id="cardStage">
+                <div class="dashboard-mockup">
+                    <div class="mockup-topbar">
+                        <div class="mockup-dot r"></div>
+                        <div class="mockup-dot y"></div>
+                        <div class="mockup-dot g"></div>
+                        <div class="mockup-url">medicardapp.local / dashboard</div>
+                    </div>
+                    <div class="mockup-body">
+                        <!-- Sidebar -->
+                        <div class="mock-sidebar">
+                            <div class="mock-sidebar-logo">
+                                <div class="icon" style="position:relative;">
+                                    <div
+                                        style="position:absolute;width:14px;height:3px;background:white;border-radius:2px;">
+                                    </div>
+                                    <div
+                                        style="position:absolute;width:3px;height:14px;background:white;border-radius:2px;">
+                                    </div>
+                                </div>
+                                <span class="sidebar-logo-text">MediCard</span>
+                            </div>
+                            <div class="mock-nav-item active">
+                                <svg class="mock-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                                </svg>
+                                Dashboard
+                            </div>
+                            <div class="mock-nav-item">
+                                <svg class="mock-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
+                                </svg>
+                                My Cards
+                            </div>
+                            <div class="mock-nav-item">
+                                <svg class="mock-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4" />
+                                </svg>
+                                New Card
+                            </div>
+                            <div class="mock-nav-item">
+                                <svg class="mock-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                                Settings
+                            </div>
+                        </div>
+
+                        <!-- Main -->
+                        <div class="mock-main">
+                            <div class="mock-header-row">
+                                <h3>Emergency Health Card</h3>
+                                <button class="mock-btn">+ Generate PDF</button>
+                            </div>
+
+                            <!-- Health Card Preview -->
+                            <div class="health-card-preview">
+                                <div class="hc-cross"></div>
+                                <div class="hc-label">Emergency Health Card</div>
+                                <div class="hc-name">Gagan G</div>
+                                <div style="font-size:0.72rem;color:#555;">DOB: 14 Aug 1998 &nbsp;·&nbsp; Male</div>
+                                <div class="hc-details">
+                                    <div class="hc-detail-group">
+                                        <span class="hc-detail-label">Blood Type</span>
+                                        <span class="hc-detail-val" style="color:var(--red);font-weight:700;">B+</span>
+                                    </div>
+                                    <div class="hc-detail-group">
+                                        <span class="hc-detail-label">Allergies</span>
+                                        <span class="hc-detail-val">Penicillin, Dust</span>
+                                    </div>
+                                    <div class="hc-detail-group">
+                                        <span class="hc-detail-label">Emergency Contact</span>
+                                        <span class="hc-detail-val">+91 98765 43210</span>
+                                    </div>
+                                </div>
+                                <div class="hc-bloodtype">B+</div>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="mock-stats">
+                                <div class="mock-stat">
+                                    <div class="mock-stat-val">1<span>✓</span></div>
+                                    <div class="mock-stat-label">Active Card</div>
+                                </div>
+                                <div class="mock-stat">
+                                    <div class="mock-stat-val" style="color:#F59E0B;">3</div>
+                                    <div class="mock-stat-label">Conditions Logged</div>
+                                </div>
+                                <div class="mock-stat">
+                                    <div class="mock-stat-val" style="color:#60A5FA;">2</div>
+                                    <div class="mock-stat-label">Medications</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features" id="features">
+        <div class="section-label">Why MediCard</div>
+        <h2 class="section-title">Built for emergencies. Designed for clarity.</h2>
+
+        <div class="features-grid">
+            <div class="feature-card animate-in">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <h3>Instant Card Generation</h3>
+                <p>Fill a simple form and generate a print-ready emergency health card in seconds. Downloadable as PDF
+                    or printable directly.</p>
+            </div>
+            <div class="feature-card animate-in" style="transition-delay: 0.1s;">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                    </svg>
+                </div>
+                <h3>Critical Health Info</h3>
+                <p>Store blood type, allergies, conditions, medications, and emergency contacts — all in a compact,
+                    standardized format.</p>
+            </div>
+            <div class="feature-card animate-in" style="transition-delay: 0.2s;">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <h3>Secure & Private</h3>
+                <p>User accounts secured with Java Servlet sessions and server-side validation. Your data stays under
+                    your control.</p>
+            </div>
+            <div class="feature-card animate-in" style="transition-delay: 0.3s;">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                </div>
+                <h3>Multi-Profile Support</h3>
+                <p>Create and manage cards for your entire family. Perfect for elderly relatives, children, or
+                    dependants who need care.</p>
+            </div>
+            <div class="feature-card animate-in" style="transition-delay: 0.4s;">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <h3>Mobile First</h3>
+                <p>Fully responsive across all devices. Access or present your card from any phone — no app download
+                    needed.</p>
+            </div>
+            <div class="feature-card animate-in" style="transition-delay: 0.5s;">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                </div>
+                <h3>Java Servlet Backend</h3>
+                <p>Built with a clear servlet architecture in mind. Easy to wire up registration, login, and form
+                    submission endpoints when ready.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section class="flow-section" id="how-it-works">
+        <div class="section-label" style="color:var(--red);">How It Works</div>
+        <h2 class="section-title" style="color:var(--ink);font-size:clamp(1.8rem,3.5vw,3rem);margin-bottom:3rem;">
+            From sign-up to card — in three steps.
+        </h2>
+
+        <div class="flow-steps">
+            <div class="flow-step animate-in">
+                <div class="step-num">01</div>
+                <h4>Create Account</h4>
+                <p>Register with your name, email, and a secure password. Your profile is stored and managed by the
+                    backend.</p>
+                <span class="tech-tag">Register / Servlet</span>
+            </div>
+            <div class="flow-step animate-in" style="transition-delay: 0.15s;">
+                <div class="step-num">02</div>
+                <h4>Fill Health Form</h4>
+                <p>Enter blood type, allergies, medications, conditions, and an emergency contact. The form is
+                    structured for quick retrieval.</p>
+                <span class="tech-tag">Form / POST Servlet</span>
+            </div>
+            <div class="flow-step animate-in" style="transition-delay: 0.3s;">
+                <div class="step-num">03</div>
+                <h4>Generate & Share</h4>
+                <p>Download a PDF health card or print it directly. Share a secure link with first responders or carry
+                    it in your wallet.</p>
+                <span class="tech-tag">Dashboard / PDF Export</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <h2>Ready in under<br><em style="font-style:italic;color:var(--red);">2 minutes.</em></h2>
+        <p>Start building your emergency health card today — no credit card required.</p>
+        <div class="cta-actions">
+            <a href="Register/register.html" class="btn-primary-lg">Create Free Account</a>
+            <a href="form/form.html" class="btn-ghost">Preview the Form</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="nav-logo">
+                    <div class="cross"></div>
+                    MediCard
+                </div>
+                <p>Emergency health cards for everyone. Fast, portable, and always ready.</p>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h5>Product</h5>
+                    <a href="Register/register.html">Register</a>
+                    <a href="login/login.html">Login</a>
+                    <a href="form/form.html">Health Form</a>
+                    <a href="dashboard/dashboard.html">Dashboard</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Tech Stack</h5>
+                    <a href="#">HTML / CSS</a>
+                    <a href="#">Java Servlets</a>
+                    <a href="#">JDBC</a>
+                    <a href="#">Apache Tomcat</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 MediCard · EmergencyHealthCardGenerator · Built by Prashanth T and Gagan G — Servlet backend
+                coming soon
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // ─── SCROLL ANIMATION (ContainerScroll equivalent) ───
+        const section = document.getElementById('preview');
+        const sticky = document.getElementById('scrollSticky');
+        const stage = document.getElementById('cardStage');
+        const title = document.getElementById('scrollTitle');
+
+        function lerp(start, end, t) {
+            return start + (end - start) * Math.max(0, Math.min(1, t));
+        }
+
+        function onScroll() {
+            const rect = section.getBoundingClientRect();
+            const sectionH = section.offsetHeight;
+            const viewH = window.innerHeight;
+
+            // progress: 0 when section top hits viewport top, 1 when section bottom hits viewport bottom
+            const scrolled = -rect.top;
+            const total = sectionH - viewH;
+            const progress = Math.max(0, Math.min(1, scrolled / total));
+
+            // rotateX: 22deg → 0deg
+            const rotX = lerp(22, 0, progress);
+
+            // scale: 1.05 → 1 (desktop) or 0.72 → 0.92 (mobile)
+            const isMobile = window.innerWidth <= 768;
+            const scaleStart = isMobile ? 0.72 : 1.05;
+            const scaleEnd = isMobile ? 0.92 : 1.0;
+            const sc = lerp(scaleStart, scaleEnd, progress);
+
+            // title translateY: 0 → -80px
+            const ty = lerp(0, -80, progress);
+
+            stage.style.transform = `rotateX(${rotX}deg) scale(${sc})`;
+            stage.style.transformOrigin = 'top center';
+            title.style.transform = `translateY(${ty}px)`;
+            title.style.opacity = lerp(1, 0.2, progress * 1.5);
+        }
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+
+        // ─── INTERSECTION OBSERVER for animate-in ───
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                    observer.unobserve(e.target);
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.animate-in').forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>
