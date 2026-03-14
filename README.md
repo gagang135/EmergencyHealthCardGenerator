@@ -43,25 +43,29 @@ Deployed on Netlify from the `main` branch. No build step required — pure stat
 
 ## 📸 Pages Overview
 
-| Page | Route | Description |
-|---|---|---|
-| 🏠 Landing | `/index.html` | Hero landing page with scroll animation |
-| 📝 Register | `/Register/register.html` | New user registration form |
-| 🔐 Login | `/login/login.html` | User login page |
-| 🩺 Health Form | `/form/form.html` | Fill in blood type, allergies, medications |
-| 📊 Dashboard | `/dashboard/dashboard.html` | View & manage your emergency health card |
+| Page | Route | Status | Description |
+|---|---|---|---|
+| 🏠 Landing | `/index.html` | ✅ Complete | Hero + 3D scroll animation, features, how-it-works, CTA |
+| 📝 Register | `/Register/register.html` | ✅ Complete | 4-step: identity, Aadhaar, phone OTP verify, health data |
+| 🔐 Login | `/login/login.html` | ✅ Complete | Phone number + SMS OTP, 6-box UI, timer, resend |
+| 📊 Dashboard | `/dashboard/dashboard.html` | ✅ Complete | Sidebar, health card, stats, QR code, activity feed |
+| 🩺 Health Form | `/form/form.html` | ✅ Complete | Edit/update health card — live preview, pre-filled, unsaved changes warning |
+
+> **`form/form.html`** is the only remaining frontend page. It is the **edit** page — reached from the dashboard's "Edit Card" button — and lets logged-in users update their health data without re-registering.
 
 ---
 
 ## ✨ Features
 
-- **Instant Card Generation** — Fill a form, get a print-ready emergency health card
-- **Critical Info Storage** — Blood type, allergies, conditions, medications, emergency contact
-- **Scroll Animation** — Professional 3D card reveal animation on the landing page (CSS + vanilla JS, inspired by Framer Motion's `ContainerScroll`)
-- **Responsive Design** — Works on all screen sizes, desktop to mobile
-- **Print & Export Ready** — Card layout designed for real-world physical printing
-- **Java Servlet Ready** — Every form and page is structured to wire up to a backend with zero HTML changes
-- **Dark Medical Theme** — Professional UI using `DM Serif Display` + `Space Mono` typography
+- **4-Step Registration** — Identity → Phone OTP → Health data → Redirect to login
+- **Phone OTP Login** — No passwords. Verify identity via SMS OTP every session
+- **Aadhaar Verification** — Split 4-4-4 input with auto-advance, hashed before DB storage
+- **Blood Type Selector** — Clickable pill buttons (A+, B+, O−, etc.) — no dropdowns
+- **Professional Dashboard** — Sidebar nav, live health card, stats, QR code, activity feed
+- **3D Scroll Animation** — Landing page card reveal (vanilla JS, mirrors Framer Motion `ContainerScroll`)
+- **Responsive Design** — Mobile hamburger menu, adaptive grid, all screen sizes
+- **Java Servlet Ready** — Every form POSTs to a servlet endpoint with zero HTML changes needed
+- **SMS OTP Architecture** — OTP generated server-side, delivered via MSG91 — API key never in HTML
 
 ---
 
@@ -70,26 +74,21 @@ Deployed on Netlify from the `main` branch. No build step required — pure stat
 ```
 EmergencyHealthCardGenerator/
 │
-├── index.html                  ← Landing page (scroll animation hero)
-├── index.css                   ← Landing page styles
+├── index.html                  ← ✅ Landing page (scroll animation, features, CTA)
 │
 ├── Register/
-│   ├── register.html           ← Registration form
-│   └── register.css            ← Registration styles
+│   └── register.html           ← ✅ 4-step registration (identity + OTP + health data)
 │
 ├── login/
-│   ├── login.html              ← Login page
-│   └── login.css               ← Login styles
+│   └── login.html              ← ✅ Phone OTP login (2-step verified flow)
 │
 ├── form/
-│   ├── form.html               ← Health data entry form
-│   └── form.css                ← Form styles
+│   └── form.html               ← ⬜ Health data edit form (pending — last page)
 │
 ├── dashboard/
-│   ├── dashboard.html          ← User dashboard with health card preview
-│   └── dashboard.css           ← Dashboard styles
+│   └── dashboard.html          ← ✅ User dashboard with health card + sidebar
 │
-├── db.properties.example       ← ✅ Commit this (template only, no real credentials)
+├── db.properties.example       ← ✅ Commit this (safe template, no real values)
 ├── db.properties               ← ❌ Never commit (add to .gitignore)
 └── .gitignore
 ```
@@ -130,12 +129,13 @@ Then visit `http://localhost:3000`
 
 | Layer | Technology |
 |---|---|
-| Markup | HTML5 |
-| Styling | CSS3 (Custom Properties, Grid, Flexbox, Animations) |
-| Interactivity | Vanilla JavaScript (minimal) |
+| Markup | HTML5 (semantic, no frameworks) |
+| Styling | CSS3 (Custom Properties, Grid, Flexbox, Keyframe Animations) |
+| Interactivity | Vanilla JavaScript — OTP logic, step navigation, countdown timer, form validation |
 | Fonts | Google Fonts — DM Serif Display, DM Sans, Space Mono |
-| Deployment | Netlify (static hosting) |
+| Deployment | Netlify (static hosting, auto-deploy from `main`) |
 | Backend (planned) | Java Servlets + JDBC + MySQL + Apache Tomcat |
+| SMS OTP (planned) | MSG91 — called server-side from `SendOtpServlet`, key never in HTML |
 
 ---
 
@@ -143,7 +143,7 @@ Then visit `http://localhost:3000`
 
 > ⚠️ **Never commit real credentials to a public repository.**
 
-All sensitive configuration must stay off GitHub. Here's the pattern to follow:
+All sensitive configuration must stay off GitHub. Follow this pattern:
 
 **Add to `.gitignore`:**
 ```
@@ -156,21 +156,25 @@ WEB-INF/classes/config.properties
 
 **Commit only the template** (`db.properties.example`):
 ```properties
-# db.properties.example  ← safe to commit, contains NO real values
+# db.properties.example  ← safe to commit, NO real values
 db.url=jdbc:mysql://localhost:3306/YOUR_DB_NAME
 db.user=YOUR_DB_USERNAME
 db.password=YOUR_DB_PASSWORD
+msg91.auth_key=YOUR_MSG91_AUTH_KEY
+msg91.template_id=YOUR_MSG91_TEMPLATE_ID
 ```
 
 **Keep the real file only on your local machine** (`db.properties`):
 ```properties
-# db.properties  ← NEVER commit this file
+# db.properties  ← NEVER commit this
 db.url=jdbc:mysql://localhost:3306/medicard
 db.user=root
 db.password=yourActualPassword
+msg91.auth_key=your_real_key
+msg91.template_id=your_real_template_id
 ```
 
-This is standard practice on every real-world Java web project.
+> SMS API keys (MSG91 / Twilio) are also secrets. **Never put them in HTML or JS** — anyone can view source and steal them. They live only in `db.properties` and are read by the servlet at runtime.
 
 ---
 
@@ -182,18 +186,18 @@ This is standard practice on every real-world Java web project.
 Browser
    │
    ▼
-┌─────────────────────────────────────────────┐
-│              Netlify CDN                    │
-│                                             │
-│  index.html  ──── index.css                 │
-│  register.html ── register.css              │
-│  login.html  ──── login.css                 │
-│  form.html   ──── form.css                  │
-│  dashboard.html ─ dashboard.css             │
-└─────────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│               Netlify CDN                    │
+│                                              │
+│  index.html           ✅ landing page        │
+│  Register/register.html ✅ 4-step signup     │
+│  login/login.html       ✅ phone OTP login   │
+│  dashboard/dashboard.html ✅ card view       │
+│  form/form.html         ⬜ edit (pending)    │
+└──────────────────────────────────────────────┘
 ```
 
-No server. No database. Pure static files served from Netlify.
+No server. No database. All OTPs are demo-mode (`console.log` only).
 
 ---
 
@@ -214,104 +218,173 @@ No server. No database. Pure static files served from Netlify.
 │  ┌──────────────────┐   ┌────────────────────────────┐  │
 │  │   web.xml         │   │        Servlets            │  │
 │  │  URL Mappings     │──▶│                            │  │
-│  │                   │   │  RegisterServlet.java       │  │
+│  │                   │   │  SendOtpServlet.java        │  │
+│  │  /send-otp   ──▶ SO│  │  VerifyOtpServlet.java      │  │
+│  │  /verify-otp ──▶ VO│  │  RegisterServlet.java       │  │
 │  │  /register   ──▶ RS│  │  LoginServlet.java          │  │
 │  │  /login      ──▶ LS│  │  FormServlet.java           │  │
 │  │  /health-form ──▶ FS│ │  DashboardServlet.java      │  │
 │  │  /dashboard  ──▶ DS│  │  LogoutServlet.java         │  │
-│  └──────────────────┘   │  DownloadCardServlet.java   │  │
-│                          └──────────────┬──────────────┘  │
-└─────────────────────────────────────────┼────────────────┘
-                                          │ JDBC
-                                          ▼
+│  │  /logout     ──▶ LO│  │  DownloadCardServlet.java   │  │
+│  └──────────────────┘   └──────────────┬───────────────┘  │
+│                                        │ MSG91 SMS API     │
+└────────────────────────────────────────┼──────────────────┘
+                                         │ JDBC
+                                         ▼
 ┌──────────────────────────────────────────────────────────┐
 │                     MySQL Database                       │
 │                                                          │
-│  ┌─────────────────────┐    ┌────────────────────────┐  │
-│  │      users           │    │     health_cards        │  │
-│  │─────────────────────│    │────────────────────────│  │
-│  │ id (PK)             │◀───│ user_id (FK)            │  │
-│  │ name                │    │ blood_type              │  │
-│  │ email (UNIQUE)      │    │ conditions              │  │
-│  │ password (hashed)   │    │ allergies               │  │
-│  │ created_at          │    │ medications             │  │
-│  └─────────────────────┘    │ emergency_contact       │  │
-│                              │ emergency_phone         │  │
-│                              └────────────────────────┘  │
+│  ┌──────────────────────┐    ┌────────────────────────┐  │
+│  │        users          │    │     health_cards        │  │
+│  │──────────────────────│    │────────────────────────│  │
+│  │ id (PK)              │◀───│ user_id (FK)            │  │
+│  │ name                 │    │ blood_type              │  │
+│  │ phone (UNIQUE) ←key  │    │ conditions              │  │
+│  │ aadhaar_hash         │    │ allergies               │  │
+│  │ dob                  │    │ medications             │  │
+│  │ gender               │    │ emergency_contact       │  │
+│  │ created_at           │    │ emergency_phone         │  │
+│  └──────────────────────┘    │ updated_at              │  │
+│                               └────────────────────────┘  │
 └──────────────────────────────────────────────────────────┘
 ```
 
----
-
-### Request Flow — Login Example
-
-```
-User fills login.html
-        │
-        │  POST /login  (email + password)
-        ▼
-  LoginServlet.java
-        │
-        ├── 1. Read email + password from request
-        ├── 2. Query DB: SELECT * FROM users WHERE email = ?
-        ├── 3. Verify BCrypt password hash
-        ├── 4. Create HttpSession → session.setAttribute("user", userObj)
-        │
-        ├── ✅ Success → redirect to /dashboard
-        └── ❌ Failure → redirect to login.html?error=1
-```
+> No `password` or `email` column — authentication is **phone + SMS OTP only**. Aadhaar is stored as a SHA-256 hash, never plain text.
 
 ---
 
-### Data Flow — Health Card Generation
+### Request Flow — Registration
 
 ```
-form.html  ──POST──▶  FormServlet
-                           │
-                    Check HttpSession
-                           │
-               ┌───────────┴───────────┐
-          Not logged in           Logged in
-               │                       │
-        redirect to             INSERT / UPDATE
-         login.html             health_cards table
-                                       │
-                               redirect to dashboard
-                                       │
-                           DashboardServlet fetches
-                           card data from DB and
-                           forwards to dashboard.html (JSP)
-                                       │
-                               User sees their card ✅
+register.html  (4 steps)
+        │
+        ├── Step 1: Name, Phone, Aadhaar, DOB, Gender → validate
+        │
+        ├── Step 2: POST /send-otp { phone }
+        │               ↓
+        │          SendOtpServlet → OTP stored in session
+        │               ↓ MSG91 API → SMS to user's phone
+        │
+        │           Enter OTP → POST /verify-otp { otp }
+        │               ↓
+        │          VerifyOtpServlet → checks session OTP + expiry
+        │               ↓ ✅ phone verified
+        │
+        └── Step 3: POST /register { all fields }
+                        ↓
+                   RegisterServlet
+                   INSERT INTO users (name, phone, aadhaar_hash, dob, gender)
+                   INSERT INTO health_cards (user_id, blood_type, allergies...)
+                        ↓
+                   redirect → login.html?registered=1
 ```
 
 ---
 
-## 🗺️ Roadmap — Java Servlet Backend
-
-The frontend is complete. The next phase is wiring up a Java backend:
+### Request Flow — Login (Phone OTP, No Password)
 
 ```
-Phase 1  ✅  Static HTML/CSS frontend
-Phase 2  ⬜  Java Servlet project setup (Eclipse / IntelliJ + Tomcat)
-Phase 3  ⬜  MySQL database schema (users + health_cards tables)
-Phase 4  ⬜  RegisterServlet.java  — INSERT user into DB
-Phase 5  ⬜  LoginServlet.java     — SELECT + HttpSession management
-Phase 6  ⬜  FormServlet.java      — INSERT/UPDATE health card data
-Phase 7  ⬜  DashboardServlet.java — GET data + forward to JSP
-Phase 8  ⬜  PDF generation        — iText / OpenPDF download
-Phase 9  ⬜  Convert pages to JSP  — Inject real user data dynamically
+login.html
+        │
+        │  Enter phone number
+        │  POST /send-otp { phone }
+        │       ↓
+        │  SendOtpServlet
+        │  ├── phone NOT in users table → error "No account. Please register."
+        │  └── phone found → generate OTP → session → MSG91 SMS
+        │
+        │  Enter 6-digit OTP
+        │  POST /verify-otp { otp }
+        │       ↓
+        │  VerifyOtpServlet
+        │  ├── OTP correct + not expired
+        │  ├── HttpSession created → session.setAttribute("user", userObj)
+        │  │
+        │  ✅ → redirect to /dashboard
+        └── ❌ → inline error, clear boxes, retry
 ```
+
+---
+
+### Data Flow — Health Card on Dashboard
+
+```
+/dashboard  ──GET──▶  DashboardServlet
+                            │
+                     Check HttpSession
+                            │
+               ┌────────────┴────────────┐
+          No session                Session valid
+               │                         │
+       redirect to               SELECT health_cards
+        login.html               WHERE user_id = session.id
+                                          │
+                                 Forward to dashboard.jsp
+                                 with card data as attributes
+                                          │
+                                User sees their real card ✅
+                                          │
+                         "Download PDF" → DownloadCardServlet → PDF
+                         "Edit Card"    → form.html → FormServlet → UPDATE
+                         "Print"        → window.print()
+```
+
+---
+
+## ✅ Frontend Completion Checklist
+
+```
+✅  index.html            — Landing page, 3D scroll animation, nav, footer
+✅  Register/register.html — 4-step signup: identity + Aadhaar + phone OTP + health
+✅  login/login.html       — Phone + 6-box OTP, timer, resend, masked display
+✅  dashboard/dashboard.html — Sidebar, health card, stats, QR, activity, profile
+✅  form/form.html         — Edit health card (live preview, pre-fill, unsaved warning)
+```
+
+### What `form/form.html` needs
+
+A single-page form pre-filled with existing health data (blood type, allergies, conditions, medications, emergency contact) and an **"Update Card"** submit button. No OTP — user is already in a valid session. Simpler than register step 3, same design system.
+
+---
+
+## 🗺️ Roadmap
+
+```
+── FRONTEND ────────────────────────────────────────────────
+Phase 1  ✅  index.html            Landing page
+Phase 1  ✅  Register/register.html 4-step registration UI
+Phase 1  ✅  login/login.html       Phone OTP login UI
+Phase 1  ✅  dashboard/dashboard.html Health card dashboard
+Phase 1  ⬜  form/form.html         Health data edit page
+
+── BACKEND ─────────────────────────────────────────────────
+Phase 2  ⬜  Java project setup     Eclipse/IntelliJ + Tomcat
+Phase 2  ⬜  MySQL schema           users + health_cards tables
+Phase 3  ⬜  SendOtpServlet         Generate OTP + MSG91 SMS API
+Phase 3  ⬜  VerifyOtpServlet       Validate OTP from session
+Phase 4  ⬜  RegisterServlet        INSERT users + health_cards
+Phase 5  ⬜  LoginServlet           Check phone exists + HttpSession
+Phase 6  ⬜  FormServlet            UPDATE health_cards for session user
+Phase 7  ⬜  DashboardServlet       SELECT card + forward to JSP
+Phase 8  ⬜  LogoutServlet          session.invalidate() + redirect
+Phase 9  ⬜  DownloadCardServlet    OpenPDF generation + stream to browser
+Phase 10 ⬜  Convert to JSP         Inject real DB data into pages
+```
+
+---
 
 ### Planned Database Schema
 
 ```sql
+-- No password column — phone + OTP is the only auth method
 CREATE TABLE users (
-  id       INT AUTO_INCREMENT PRIMARY KEY,
-  name     VARCHAR(100) NOT NULL,
-  email    VARCHAR(100) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,        -- BCrypt hashed
-  created  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  id            INT AUTO_INCREMENT PRIMARY KEY,
+  name          VARCHAR(100) NOT NULL,
+  phone         VARCHAR(15)  UNIQUE NOT NULL,  -- login identifier
+  aadhaar_hash  VARCHAR(255) NOT NULL,          -- SHA-256 hash, never plain text
+  dob           DATE,
+  gender        ENUM('Male','Female','Other','Prefer not to say'),
+  created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE health_cards (
@@ -323,13 +396,26 @@ CREATE TABLE health_cards (
   medications       TEXT,
   emergency_contact VARCHAR(100),
   emergency_phone   VARCHAR(20),
+  updated_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
 ```
 
-### Servlet URL Mapping (planned `web.xml`)
+---
+
+### Servlet URL Mapping (`web.xml`)
 
 ```xml
+<servlet-mapping>
+  <servlet-name>SendOtpServlet</servlet-name>
+  <url-pattern>/send-otp</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+  <servlet-name>VerifyOtpServlet</servlet-name>
+  <url-pattern>/verify-otp</url-pattern>
+</servlet-mapping>
+
 <servlet-mapping>
   <servlet-name>RegisterServlet</servlet-name>
   <url-pattern>/register</url-pattern>
@@ -349,6 +435,16 @@ CREATE TABLE health_cards (
   <servlet-name>DashboardServlet</servlet-name>
   <url-pattern>/dashboard</url-pattern>
 </servlet-mapping>
+
+<servlet-mapping>
+  <servlet-name>LogoutServlet</servlet-name>
+  <url-pattern>/logout</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+  <servlet-name>DownloadCardServlet</servlet-name>
+  <url-pattern>/download-card</url-pattern>
+</servlet-mapping>
 ```
 
 ---
@@ -357,14 +453,16 @@ CREATE TABLE health_cards (
 
 | Token | Value | Usage |
 |---|---|---|
-| `--red` | `#E63946` | Primary accent, emergency cross |
-| `--bg` | `#0C0C0E` | Dashboard background |
-| `--cream` | `#F8F4EF` | Landing page background |
-| `--surface` | `#141416` | Card backgrounds |
-| `--green` | `#22C55E` | Active / success states |
-| Display font | `DM Serif Display` | Headings, card names |
-| Body font | `DM Sans` | UI text |
-| Mono font | `Space Mono` | Labels, IDs, code |
+| `--red` | `#E63946` | Primary accent, cross icon, buttons, OTP active |
+| `--red-deep` | `#B5202D` | Hover states on all red elements |
+| `--cream` | `#F8F4EF` | Landing + auth pages background |
+| `--ink` | `#0D0D0D` | Card headers (dark strip), body text |
+| `--bg` | `#0C0C0E` | Dashboard dark background |
+| `--surface` | `#141416` | Dashboard panel / card surfaces |
+| `--pulse-green` | `#22C55E` | Success states, verified badge, progress done |
+| Display font | `DM Serif Display` | Page titles, card names, hero headings |
+| Body font | `DM Sans` | All UI text, labels, buttons, inputs |
+| Mono font | `Space Mono` | OTP boxes, Aadhaar, IDs, code labels, badges |
 
 ---
 
@@ -374,8 +472,8 @@ CREATE TABLE health_cards (
 |---|---|
 | `> 1100px` | Full sidebar + 2-col dashboard grid |
 | `768px – 1100px` | Sidebar visible, stacked grid |
-| `< 768px` | Hamburger menu, single column |
-| `< 480px` | Compact stats, simplified card |
+| `< 768px` | Hamburger menu, nav links hidden, single column |
+| `< 480px` | Compact stats, OTP boxes narrower, simplified card |
 
 ---
 
@@ -389,7 +487,7 @@ This is a learning project. Contributions are welcome!
 git checkout -b feature/add-servlet-backend
 
 # 3. Commit your changes
-git commit -m "feat: add RegisterServlet with JDBC"
+git commit -m "feat: add SendOtpServlet with MSG91 integration"
 
 # 4. Push and open a Pull Request
 git push origin feature/add-servlet-backend
@@ -405,8 +503,9 @@ This project is open source and available under the [MIT License](LICENSE).
 
 <div align="center">
 
+**Built with ❤️ by the MediCard team**
 
-*Frontend complete · Java Servlet backend coming soon*
+*Frontend complete ✅ · Java Servlet backend coming soon**
 
 | | Contributor | GitHub |
 |---|---|---|
