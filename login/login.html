@@ -1,57 +1,1289 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./login.css">
-    <title>Login</title>
-</head>
-<body>
-    <h1>Log-In</h1>
-    <form action="../dashboard/dashboard.html" onsubmit="showMessage(event)">
-       
-            <table><tr>
-                <td><label for="number">Mobile Number:</label></td>
-                <td><input type="number" id="number" minlength="10" maxlength="10" placeholder="Enter your registered mobile number" required></td>
-                <td><button onclick="sendOTP()">Send OTP</button></td>
-            </tr>
-            <tr>
-                <td><label for="otp">One Time Password (OTP):</label></td>
-                <td><input type="text" id="otp" placeholder="Enter OTP here" maxlength="6"></td>
-                
-            </tr>
-            <tr>
-                <td><button onclick="resendOTP()">Resend OTP</button></td>
-                <td><button type="submit">Submit</button></td>
-            </tr></table>
-    </form>
-    <script>
-        let generateOTP="";
-        function sendOTP(){
-            let mobile=document.getElementById("number").value;
-            if(mobile.length!=10){
-                    event.preventDefault();
 
-                alaert("enter valid 10 digit mobile number" );
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediCard — Sign In via Phone</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* ═══════════════════════════════════════
+       DESIGN TOKENS — exact copy from index.html
+    ═══════════════════════════════════════ */
+        :root {
+            --red: #E63946;
+            --red-deep: #B5202D;
+            --cream: #F8F4EF;
+            --ink: #0D0D0D;
+            --ink-muted: #3A3A3A;
+            --ink-light: #888;
+            --white: #FFFFFF;
+            --card-bg: #1A1A1A;
+            --card-border: #333;
+            --pulse-green: #22C55E;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--ink);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ═══════════════════════════════════════
+       NAV — identical to index.html
+    ═══════════════════════════════════════ */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem 3rem;
+            background: rgba(248, 244, 239, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-family: 'Space Mono', monospace;
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: -0.02em;
+            text-decoration: none;
+            color: var(--ink);
+        }
+
+        .nav-logo .cross {
+            width: 28px;
+            height: 28px;
+            background: var(--red);
+            border-radius: 6px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .nav-logo .cross::before,
+        .nav-logo .cross::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .nav-logo .cross::before {
+            width: 14px;
+            height: 3px;
+        }
+
+        .nav-logo .cross::after {
+            width: 3px;
+            height: 14px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--ink-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--red);
+        }
+
+        .nav-cta {
+            background: var(--red);
+            color: white !important;
+            padding: 0.5rem 1.2rem;
+            border-radius: 6px;
+            transition: background 0.2s !important;
+        }
+
+        .nav-cta:hover {
+            background: var(--red-deep) !important;
+        }
+
+        /* ═══════════════════════════════════════
+       PAGE BACKGROUND — same grid + glow as hero
+    ═══════════════════════════════════════ */
+        .page-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(230, 57, 70, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(230, 57, 70, 0.06) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        .bg-glow {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 500px;
+            background: radial-gradient(ellipse at center, rgba(230, 57, 70, 0.10) 0%, transparent 70%);
+        }
+
+        /* ═══════════════════════════════════════
+       MAIN LAYOUT
+    ═══════════════════════════════════════ */
+        .page-wrap {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 7rem 1.5rem 3rem;
+        }
+
+        /* ═══════════════════════════════════════
+       LOGIN CARD
+    ═══════════════════════════════════════ */
+        .login-card {
+            width: 100%;
+            max-width: 460px;
+            background: white;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow:
+                0 1px 3px rgba(0, 0, 0, 0.04),
+                0 8px 32px rgba(0, 0, 0, 0.08),
+                0 32px 64px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            animation: cardIn 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(24px) scale(0.98);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* card header strip */
+        .card-header {
+            background: var(--ink);
+            padding: 2rem 2rem 1.8rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 180px;
+            height: 180px;
+            background: radial-gradient(circle, rgba(230, 57, 70, 0.18) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: 20px;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(230, 57, 70, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            background: rgba(230, 57, 70, 0.12);
+            border: 1px solid rgba(230, 57, 70, 0.25);
+            color: var(--red);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            padding: 0.3rem 0.75rem;
+            border-radius: 100px;
+            margin-bottom: 1.1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--pulse-green);
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(0.7);
+            }
+        }
+
+        .card-header h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.9rem;
+            color: white;
+            line-height: 1.1;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-header h1 em {
+            font-style: italic;
+            color: var(--red);
+        }
+
+        .card-header p {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.45);
+            margin-top: 0.4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* card body */
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* ═══════════════════════════════════════
+       STEPS — email step & otp step
+    ═══════════════════════════════════════ */
+        .step {
+            display: none;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .step.active {
+            display: flex;
+            animation: stepIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        @keyframes stepIn {
+            from {
+                opacity: 0;
+                transform: translateX(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ═══════════════════════════════════════
+       FORM ELEMENTS
+    ═══════════════════════════════════════ */
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .field label {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--ink);
+            font-family: 'Space Mono', monospace;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+
+        .field-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .field-icon {
+            position: absolute;
+            left: 0.9rem;
+            width: 16px;
+            height: 16px;
+            color: var(--ink-light);
+            pointer-events: none;
+            flex-shrink: 0;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 0.78rem 0.9rem 0.78rem 2.6rem;
+            background: #FAFAF9;
+            border: 1.5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            color: var(--ink);
+            transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+            outline: none;
+        }
+
+        .field input::placeholder {
+            color: var(--ink-light);
+        }
+
+        .field input:focus {
+            border-color: var(--red);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+        }
+
+        .field input.error {
+            border-color: var(--red);
+            background: rgba(230, 57, 70, 0.03);
+        }
+
+        /* phone prefix */
+        .phone-prefix {
+            position: absolute;
+            left: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0 0.75rem 0 0.9rem;
+            border-right: 1.5px solid rgba(0, 0, 0, 0.08);
+            font-family: 'Space Mono', monospace;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--ink-muted);
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .phone-prefix svg {
+            color: var(--ink-light);
+        }
+
+        /* override default icon padding when phone-prefix is present */
+        .field-wrap input[type="tel"] {
+            padding-left: 5rem;
+        }
+
+        /* OTP input — large digits */
+        .otp-wrap {
+            display: flex;
+            gap: 0.6rem;
+            justify-content: center;
+        }
+
+        .otp-wrap input {
+            width: 52px;
+            height: 60px;
+            text-align: center;
+            padding: 0;
+            font-family: 'Space Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0;
+            background: #FAFAF9;
+            border: 1.5px solid rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            caret-color: var(--red);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        .otp-wrap input:focus {
+            border-color: var(--red);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+        }
+
+        .otp-wrap input.error {
+            border-color: var(--red);
+            background: rgba(230, 57, 70, 0.04);
+        }
+
+        /* ═══════════════════════════════════════
+       BUTTONS — exact styles from index.html
+    ═══════════════════════════════════════ */
+        .btn-primary {
+            background: var(--red);
+            color: white;
+            padding: 0.85rem 2rem;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+            box-shadow: 0 4px 20px rgba(230, 57, 70, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--red-deep);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(230, 57, 70, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            background: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--ink);
+            padding: 0.85rem 2rem;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            border: 1.5px solid rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            width: 100%;
+            transition: border-color 0.2s, color 0.2s, transform 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--red);
+            color: var(--red);
+            transform: translateY(-2px);
+        }
+
+        /* small inline ghost button for "change email" */
+        .btn-ghost-sm {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.78rem;
+            color: var(--ink-light);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            transition: color 0.2s;
+            padding: 0;
+        }
+
+        .btn-ghost-sm:hover {
+            color: var(--red);
+        }
+
+        /* ═══════════════════════════════════════
+       SEND OTP ROW
+    ═══════════════════════════════════════ */
+        .send-row {
+            display: flex;
+            gap: 0.7rem;
+            align-items: flex-end;
+        }
+
+        .send-row .field {
+            flex: 1;
+        }
+
+        .btn-send {
+            background: var(--red);
+            color: white;
+            padding: 0 1.1rem;
+            height: 44px;
+            border-radius: 8px;
+            border: none;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: background 0.2s, transform 0.15s;
+            box-shadow: 0 2px 10px rgba(230, 57, 70, 0.3);
+        }
+
+        .btn-send:hover {
+            background: var(--red-deep);
+            transform: translateY(-1px);
+        }
+
+        .btn-send:disabled {
+            background: #ddd;
+            color: #aaa;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ═══════════════════════════════════════
+       FEEDBACK MESSAGES
+    ═══════════════════════════════════════ */
+        .msg {
+            display: none;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            animation: msgIn 0.3s ease both;
+        }
+
+        @keyframes msgIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .msg.show {
+            display: flex;
+        }
+
+        .msg.success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            color: #15803d;
+        }
+
+        .msg.error {
+            background: rgba(230, 57, 70, 0.08);
+            border: 1px solid rgba(230, 57, 70, 0.25);
+            color: var(--red-deep);
+        }
+
+        .msg svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        /* ═══════════════════════════════════════
+       STEP INDICATOR
+    ═══════════════════════════════════════ */
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.1);
+            transition: background 0.3s, transform 0.3s;
+        }
+
+        .step-dot.active {
+            background: var(--red);
+            transform: scale(1.3);
+        }
+
+        .step-dot.done {
+            background: var(--pulse-green);
+        }
+
+        .step-line {
+            flex: 1;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-line-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            background: var(--pulse-green);
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* ═══════════════════════════════════════
+       RESEND TIMER
+    ═══════════════════════════════════════ */
+        .resend-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.78rem;
+            color: var(--ink-light);
+        }
+
+        .resend-row .email-display {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--ink-muted);
+            background: rgba(0, 0, 0, 0.04);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+        }
+
+        #resendBtn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.78rem;
+            color: var(--red);
+            font-weight: 600;
+            padding: 0;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            transition: color 0.2s;
+        }
+
+        #resendBtn:hover {
+            color: var(--red-deep);
+        }
+
+        #resendBtn:disabled {
+            color: var(--ink-light);
+            text-decoration: none;
+            cursor: default;
+        }
+
+        #timerDisplay {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.72rem;
+            color: var(--ink-light);
+        }
+
+        /* ═══════════════════════════════════════
+       DIVIDER + FOOTER LINK
+    ═══════════════════════════════════════ */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 0.2rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(0, 0, 0, 0.08);
+        }
+
+        .divider span {
+            font-size: 0.72rem;
+            color: var(--ink-light);
+            font-family: 'Space Mono', monospace;
+        }
+
+        .card-footer {
+            padding: 1.2rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card-footer p {
+            font-size: 0.82rem;
+            color: var(--ink-muted);
+        }
+
+        .card-footer a {
+            color: var(--red);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .card-footer a:hover {
+            color: var(--red-deep);
+        }
+
+        /* ═══════════════════════════════════════
+       SUCCESS STATE
+    ═══════════════════════════════════════ */
+        .success-state {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 1rem;
+            padding: 1rem 0;
+        }
+
+        .success-state.active {
+            display: flex;
+            animation: stepIn 0.4s ease both;
+        }
+
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(34, 197, 94, 0.12);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: popIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .success-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--pulse-green);
+        }
+
+        .success-state h3 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.4rem;
+            color: var(--ink);
+        }
+
+        .success-state p {
+            font-size: 0.85rem;
+            color: var(--ink-muted);
+            line-height: 1.6;
+        }
+
+        /* ═══════════════════════════════════════
+       SECURITY NOTE
+    ═══════════════════════════════════════ */
+        .security-note {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.72rem;
+            color: var(--ink-light);
+            font-family: 'Space Mono', monospace;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+
+        .security-note svg {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+        }
+
+        /* ═══════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════ */
+        @media (max-width: 768px) {
+            nav {
+                padding: 1rem 1.5rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .page-wrap {
+                padding: 5.5rem 1rem 2rem;
+                align-items: flex-start;
+            }
+
+            .login-card {
+                max-width: 100%;
+                border-radius: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- BACKGROUND -->
+    <div class="page-bg">
+        <div class="bg-grid"></div>
+        <div class="bg-glow"></div>
+    </div>
+
+    <!-- NAV — identical to index.html -->
+    <nav>
+        <a class="nav-logo" href="../index.html">
+            <div class="cross"></div>
+            MediCard
+        </a>
+        <div class="nav-links">
+            <a href="../index.html#features">Features</a>
+            <a href="../index.html#how-it-works">How It Works</a>
+            <a href="../Register/register.html" class="nav-cta">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- PAGE -->
+    <div class="page-wrap">
+        <div class="login-card">
+
+            <!-- Card Header -->
+            <div class="card-header">
+                <div class="header-badge">
+                    <span class="dot"></span>
+                    Secure Login · SMS OTP
+                </div>
+                <h1>Welcome <em>back.</em></h1>
+                <p>Enter your phone number to receive a one-time password.</p>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+
+                <!-- Step indicator -->
+                <div class="step-indicator" id="stepIndicator">
+                    <div class="step-dot active" id="dot1"></div>
+                    <div class="step-line">
+                        <div class="step-line-fill" id="stepLine"></div>
+                    </div>
+                    <div class="step-dot" id="dot2"></div>
+                </div>
+
+                <!-- ── STEP 1: Email + Send OTP ── -->
+                <div class="step active" id="step1">
+
+                    <div class="msg" id="msg1"></div>
+
+                    <div class="send-row">
+                        <div class="field">
+                            <label for="phoneInput">Mobile Number</label>
+                            <div class="field-wrap">
+                                <!-- country code prefix -->
+                                <div class="phone-prefix">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="1.8">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                    </svg>
+                                    <span>+91</span>
+                                </div>
+                                <input type="tel" id="phoneInput" placeholder="98765 43210" inputmode="numeric"
+                                    maxlength="10" autocomplete="tel-national" />
+                            </div>
+                        </div>
+                        <!-- BUG FIX 3: type="button" prevents form submission -->
+                        <button type="button" class="btn-send" id="sendOtpBtn" onclick="sendOTP()">
+                            Send OTP
+                        </button>
+                    </div>
+
+                    <div class="security-note">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                        OTP sent via SMS · Valid for 5 minutes · Never share your code
+                    </div>
+
+                </div><!-- /step1 -->
+
+                <!-- ── STEP 2: OTP Verify ── -->
+                <div class="step" id="step2">
+
+                    <div class="msg" id="msg2"></div>
+
+                    <!-- shows which phone OTP was sent to + change link -->
+                    <div class="resend-row">
+                        <span>OTP sent to <span class="email-display" id="phoneDisplay"></span></span>
+                        <button type="button" class="btn-ghost-sm" onclick="goBack()">Change</button>
+                    </div>
+
+                    <div class="field">
+                        <label>Enter 6-digit OTP</label>
+                        <!-- BUG FIX 4+5: stored as String, compared as String; no form submit involved -->
+                        <div class="otp-wrap" id="otpBoxes">
+                            <input type="text" inputmode="numeric" maxlength="1" id="o1" />
+                            <input type="text" inputmode="numeric" maxlength="1" id="o2" />
+                            <input type="text" inputmode="numeric" maxlength="1" id="o3" />
+                            <input type="text" inputmode="numeric" maxlength="1" id="o4" />
+                            <input type="text" inputmode="numeric" maxlength="1" id="o5" />
+                            <input type="text" inputmode="numeric" maxlength="1" id="o6" />
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-primary" id="verifyBtn" onclick="verifyOTP()">
+                        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Verify & Sign In
+                    </button>
+
+                    <!-- Resend timer -->
+                    <div class="resend-row">
+                        <span id="timerDisplay"></span>
+                        <!-- BUG FIX 3: type="button" on resend too -->
+                        <button type="button" id="resendBtn" disabled onclick="resendOTP()">Resend OTP</button>
+                    </div>
+
+                </div><!-- /step2 -->
+
+                <!-- ── SUCCESS STATE ── -->
+                <div class="success-state" id="successState">
+                    <div class="success-icon">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                    <h3>Verified!</h3>
+                    <p>Phone number confirmed. Redirecting you to your dashboard…</p>
+                    <div
+                        style="width:100%;background:rgba(0,0,0,0.06);border-radius:100px;height:4px;overflow:hidden;margin-top:0.5rem;">
+                        <div id="redirectBar"
+                            style="height:100%;background:var(--pulse-green);width:0%;transition:width 2s linear;border-radius:100px;">
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /card-body -->
+
+            <!-- Card Footer -->
+            <div class="card-footer">
+                <p>Don't have an account? <a href="../Register/register.html">Create one free →</a></p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+     JAVASCRIPT — all 5 bugs fixed
+═══════════════════════════════════════ -->
+    <script>
+        // ── STATE ──────────────────────────────────────────────
+        // BUG FIX 1: single variable name used everywhere — no mismatch
+        // BUG FIX 4: stored as String(...) so comparison with input string works
+        let generatedOTP = '';   // fixed: was split between generateOTP / generatedOTP
+        let timerInterval = null;
+        let timerSeconds = 0;
+
+        // ── HELPERS ────────────────────────────────────────────
+        function showMsg(stepNum, type, text) {
+            // BUG FIX 2: was `alaert(...)` — fixed to proper DOM feedback, no alert() at all
+            const el = document.getElementById('msg' + stepNum);
+            const icons = {
+                success: '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>',
+                error: '<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>',
+            };
+            el.className = 'msg ' + type + ' show';
+            el.innerHTML = icons[type] + '<span>' + text + '</span>';
+        }
+
+        function clearMsg(stepNum) {
+            const el = document.getElementById('msg' + stepNum);
+            el.className = 'msg';
+            el.innerHTML = '';
+        }
+
+        function isValidPhone(phone) {
+            // Indian mobile: 10 digits, starts with 6-9
+            return /^[6-9]\d{9}$/.test(phone.replace(/\s/g, ''));
+        }
+
+        function getOTPValue() {
+            return ['o1', 'o2', 'o3', 'o4', 'o5', 'o6']
+                .map(id => document.getElementById(id).value.trim())
+                .join('');
+        }
+
+        function clearOTPBoxes() {
+            ['o1', 'o2', 'o3', 'o4', 'o5', 'o6'].forEach(id => {
+                document.getElementById(id).value = '';
+                document.getElementById(id).classList.remove('error');
+            });
+        }
+
+        // ── STEP NAVIGATION ────────────────────────────────────
+        function goToStep2() {
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+            // update step indicator
+            document.getElementById('dot1').classList.remove('active');
+            document.getElementById('dot1').classList.add('done');
+            document.getElementById('dot2').classList.add('active');
+            document.getElementById('stepLine').style.width = '100%';
+        }
+
+        function goBack() {
+            clearMsg(1); clearMsg(2); clearOTPBoxes();
+            stopTimer();
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('dot1').classList.remove('done');
+            document.getElementById('dot1').classList.add('active');
+            document.getElementById('dot2').classList.remove('active');
+            document.getElementById('stepLine').style.width = '0%';
+        }
+
+        // ── OTP GENERATION ─────────────────────────────────────
+        function generateOTPCode() {
+            // BUG FIX 1 & 4: one variable, stored as String
+            generatedOTP = String(Math.floor(100000 + Math.random() * 900000));
+            return generatedOTP;
+        }
+
+        // ── SEND OTP ───────────────────────────────────────────
+        // BUG FIX 5: no `event` parameter — called directly from onclick, no form involved
+        function sendOTP() {
+            clearMsg(1);
+            const phoneInput = document.getElementById('phoneInput');
+            const phone = phoneInput.value.replace(/\s/g, '').trim();
+
+            if (!phone) {
+                phoneInput.classList.add('error');
+                showMsg(1, 'error', 'Please enter your mobile number.');
+                setTimeout(() => phoneInput.classList.remove('error'), 2000);
                 return;
             }
-            generatedOTP=Math.floor(100000+Math.random()*900000);
-            alert("OTP sent: "+ generatedOTP);
+            if (!isValidPhone(phone)) {
+                phoneInput.classList.add('error');
+                showMsg(1, 'error', 'Enter a valid 10-digit Indian mobile number.');
+                setTimeout(() => phoneInput.classList.remove('error'), 2000);
+                return;
+            }
 
+            const otp = generateOTPCode();
+
+            // ── DEMO MODE ──────────────────────────────────────────────────
+            // In production: POST to SendOtpServlet with { phone: "+91" + phone }
+            // Servlet calls MSG91 API — API key stays server-side, never in HTML
+            // ──────────────────────────────────────────────────────────────
+            console.log('%c📱 SMS OTP Demo', 'color:#E63946;font-weight:bold;font-size:14px');
+            console.log('To: +91 ' + phone);
+            console.log('OTP: ' + otp);
+            console.log('(In production this is sent via MSG91 / Twilio SMS — never logged here)');
+
+            // Show masked phone number: 98765 43210 → +91 ••••• 43210
+            const masked = '+91 ••••• ' + phone.slice(-5);
+            document.getElementById('phoneDisplay').textContent = masked;
+
+            showMsg(1, 'success', 'OTP sent to +91 ' + phone + ' via SMS!');
+
+            const sendBtn = document.getElementById('sendOtpBtn');
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Sent ✓';
+
+            setTimeout(() => {
+                goToStep2();
+                clearMsg(1);
+                startTimer(60);
+                document.getElementById('o1').focus();
+            }, 700);
         }
-        function resendOTP(){
-            generatedOTP=Math.floor(100000+Math.random()*900000);
-            alert("new OTP sent: "+ generatedOTP);
-        }
-        function showMessage(event){
-            let userOTP=document.getElementById("otp").value;
-            if(userOTP==generateOTP){
-                alert("Login Successful");
-                window.location.href="../dashboard/dashboard.html";
-            }else{
-                alert("Invalid OTP");
+
+        // ── VERIFY OTP ─────────────────────────────────────────
+        function verifyOTP() {
+            clearMsg(2);
+            const entered = getOTPValue();
+
+            if (entered.length < 6) {
+                ['o1', 'o2', 'o3', 'o4', 'o5', 'o6'].forEach(id => {
+                    if (!document.getElementById(id).value)
+                        document.getElementById(id).classList.add('error');
+                });
+                showMsg(2, 'error', 'Please enter all 6 digits.');
+                return;
+            }
+
+            // BUG FIX 1 + 4: both sides are strings, comparison works correctly
+            if (entered === generatedOTP) {
+                stopTimer();
+                document.getElementById('step2').classList.remove('active');
+                document.getElementById('successState').classList.add('active');
+                document.getElementById('dot2').classList.remove('active');
+                document.getElementById('dot2').classList.add('done');
+
+                // animate redirect bar then navigate
+                setTimeout(() => {
+                    document.getElementById('redirectBar').style.width = '100%';
+                }, 50);
+                setTimeout(() => {
+                    window.location.href = '../dashboard/dashboard.html';
+                }, 2200);
+            } else {
+                ['o1', 'o2', 'o3', 'o4', 'o5', 'o6'].forEach(id => {
+                    document.getElementById(id).classList.add('error');
+                });
+                showMsg(2, 'error', 'Incorrect OTP. Please try again.');
+                setTimeout(() => {
+                    clearOTPBoxes();
+                    clearMsg(2);
+                    document.getElementById('o1').focus();
+                }, 1500);
             }
         }
+
+        // ── RESEND OTP ─────────────────────────────────────────
+        // BUG FIX 3: type="button" on the resend button — already handled in HTML
+        function resendOTP() {
+            clearMsg(2);
+            clearOTPBoxes();
+            const otp = generateOTPCode();
+            const phone = document.getElementById('phoneInput').value.replace(/\s/g, '').trim();
+            console.log('%c📱 OTP Resent', 'color:#E63946;font-weight:bold');
+            console.log('To: +91 ' + phone + '  |  OTP: ' + otp);
+            showMsg(2, 'success', 'New OTP sent to your phone via SMS!');
+            stopTimer();
+            startTimer(60);
+        }
+
+        // ── COUNTDOWN TIMER ────────────────────────────────────
+        function startTimer(seconds) {
+            timerSeconds = seconds;
+            const resendBtn = document.getElementById('resendBtn');
+            const timerDisplay = document.getElementById('timerDisplay');
+            resendBtn.disabled = true;
+
+            function tick() {
+                if (timerSeconds <= 0) {
+                    timerDisplay.textContent = '';
+                    resendBtn.disabled = false;
+                    clearInterval(timerInterval);
+                    return;
+                }
+                const m = Math.floor(timerSeconds / 60);
+                const s = String(timerSeconds % 60).padStart(2, '0');
+                timerDisplay.textContent = 'Resend in ' + (m > 0 ? m + ':' : '') + s + 's';
+                timerSeconds--;
+            }
+            tick();
+            timerInterval = setInterval(tick, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = null;
+        }
+
+        // ── OTP BOX AUTO-ADVANCE ───────────────────────────────
+        document.addEventListener('DOMContentLoaded', function () {
+            const ids = ['o1', 'o2', 'o3', 'o4', 'o5', 'o6'];
+            ids.forEach(function (id, idx) {
+                const input = document.getElementById(id);
+
+                input.addEventListener('input', function () {
+                    input.classList.remove('error');
+                    // only keep digits
+                    input.value = input.value.replace(/\D/g, '');
+                    if (input.value && idx < ids.length - 1) {
+                        document.getElementById(ids[idx + 1]).focus();
+                    }
+                    // auto-verify when all filled
+                    if (getOTPValue().length === 6) verifyOTP();
+                });
+
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Backspace' && !input.value && idx > 0) {
+                        document.getElementById(ids[idx - 1]).focus();
+                    }
+                });
+
+                // allow paste of full 6-digit code into first box
+                input.addEventListener('paste', function (e) {
+                    if (idx !== 0) return;
+                    e.preventDefault();
+                    const pasted = (e.clipboardData || window.clipboardData)
+                        .getData('text').replace(/\D/g, '').slice(0, 6);
+                    pasted.split('').forEach(function (ch, i) {
+                        if (ids[i]) document.getElementById(ids[i]).value = ch;
+                    });
+                    if (pasted.length === 6) verifyOTP();
+                    else if (pasted.length > 0) document.getElementById(ids[pasted.length - 1]).focus();
+                });
+            });
+
+            // allow Enter key on phone input to trigger send
+            document.getElementById('phoneInput').addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') sendOTP();
+            });
+
+            // only allow digits in phone input
+            document.getElementById('phoneInput').addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '').slice(0, 10);
+            });
+        });
     </script>
+
 </body>
+
 </html>
